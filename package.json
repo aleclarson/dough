@@ -1,7 +1,6 @@
 {
   "name": "umbrellajs",
   "version": "2.10.1",
-  "main": "umbrella.min.js",
   "description": "Lightweight and intuitive javascript library",
   "homepage": "http://umbrellajs.com/",
   "license": "MIT",
