@@ -3,7 +3,6 @@ const u = require('./core');
 const impl = u.prototype;
 const Umbrella = impl.constructor;
 
-
 impl.children = function(selector) {
   const children = this.length == 1 ?
     u(this.nodes[0].childNodes) : this.array(getChildren)
@@ -14,11 +13,9 @@ function getChildren(node) {
   return node.childNodes
 }
 
-
 Object.defineProperty(impl, 'childNodes', {
   get() { return this.nodes[0].childNodes }
 });
-
 
 impl.closest = function(selector) {
   const matches = this._matcher(selector)
@@ -30,12 +27,10 @@ impl.closest = function(selector) {
   })
 }
 
-
 impl.eq = function(index) {
   const node = this.nodes[index < 0 ? this.length + index : index]
   return node ? new Umbrella([node]) : u()
 };
-
 
 impl.find = function(selector) {
   if (typeof selector != 'string') {
@@ -46,7 +41,6 @@ impl.find = function(selector) {
   return this.map(node =>
     node.querySelectorAll(selector))
 };
-
 
 impl.first = function(selector) {
   let node
@@ -63,16 +57,13 @@ impl.first = function(selector) {
   }
 };
 
-
 Object.defineProperty(impl, 'firstChild', {
   get() { return this.nodes[0].firstChild }
 });
 
-
 Object.defineProperty(impl, 'firstNode', {
   get() { return this.nodes[0] }
 });
-
 
 const indexOf = Function.call.bind(Array.prototype.indexOf)
 impl.index = function(arg) {
@@ -83,7 +74,6 @@ impl.index = function(arg) {
     return indexOf(this.nodes, u(arg).firstNode)
   }
 }
-
 
 impl.last = function(selector) {
   let node
@@ -100,11 +90,9 @@ impl.last = function(selector) {
   }
 };
 
-
 Object.defineProperty(impl, 'lastChild', {
   get() { return last(this.nodes).lastChild }
 });
-
 
 Object.defineProperty(impl, 'lastNode', {
   get() { return last(this.nodes) }
@@ -128,11 +116,9 @@ function getParent(node) {
   return node.parentNode
 }
 
-
 Object.defineProperty(impl, 'parentNode', {
   get() { return this.nodes[0].parentNode }
 });
-
 
 impl.siblings = function(selector) {
   return this.parent().children(selector).not(this)
