@@ -2,12 +2,16 @@
 const u = require('./core');
 const Umbrella = u.prototype.constructor;
 
-// Get the direct children of all of the nodes with an optional filter
-u.prototype.children = function (selector) {
-  return this.map(function (node) {
-    return this.slice(node.children);
-  }).filter(selector);
-};
+
+u.prototype.children = function(selector) {
+  const children = this.length == 1 ?
+    u(this.nodes[0].childNodes) : this.array(getChildren)
+  return selector ? children.filter(selector) : children
+}
+
+function getChildren(node) {
+  return node.childNodes
+}
 
 
 Object.defineProperty(u.prototype, 'childNodes', {
