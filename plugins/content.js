@@ -19,6 +19,11 @@ u.prototype.append = function() {
   return this
 };
 
+u.prototype.appendTo = function(parent, context) {
+  if (parent) u(parent, context).append(this)
+  return this
+};
+
 u.prototype.before = function() {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
