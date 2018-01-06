@@ -35,11 +35,9 @@ var u = function (parameter, context) {
 };
 
 // Map u(...).length to u(...).nodes.length
-u.prototype = {
-  get length () {
-    return this.nodes.length;
-  }
-};
+Object.defineProperty(u.prototype, 'length', {
+  get() { return this.nodes.length }
+});
 
 // This made the code faster, read "Initializing instance variables" in
 // https://developers.google.com/speed/articles/optimizing-javascript
