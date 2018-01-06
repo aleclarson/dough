@@ -1,46 +1,153 @@
-// Umbrella JS  http://umbrellajs.com/
-// -----------
-// Small, lightweight jQuery alternative
-// @author Francisco Presencia Fandos http://francisco.io/
-// @inspiration http://youmightnotneedjquery.com/
 
-// Initialize the library
-var u = function (parameter, context) {
-  // Make it an instance of u() to avoid needing 'new' as in 'new u()' and just
-  // use 'u().bla();'.
-  // @reference http://stackoverflow.com/q/24019863
-  // @reference http://stackoverflow.com/q/8875878
-  if (!(this instanceof u)) {
-    return new u(parameter, context);
+const markupRE = /^\s*</
+const emptyInst = Object.create(Umbrella.prototype)
+
+function Umbrella(nodes) {
+  this.nodes = nodes
+}
+
+function u(val, context) {
+  // Null/undefined always returns the same instance.
+  if (val == null) {
+    return emptyInst
   }
-
-  // No need to further processing it if it's already an instance
-  if (parameter instanceof u) {
-    return parameter;
+  // Return instances immediately.
+  if (u.is(val)) {
+    return val
   }
-
-  // Parse it as a CSS selector if it's a string
-  if (typeof parameter === 'string') {
-    parameter = this.select(parameter, context);
+  let nodes
+  if (typeof val == 'string') {
+    // Generate HTML node from markup.
+    if (markupRE.test(val)) {
+      nodes = renderMarkup(val)
+    } else {
+      nodes = select(val, context)
+      if (!nodes) return emptyInst
+      if (isNode(nodes)) {
+        nodes = [nodes]
+      } else if (nodes.length) {
+        nodes = slice(nodes)
+      } else {
+        return emptyInst
+      }
+    }
   }
-
-  // If we're referring a specific node as in on('click', function(){ u(this) })
-  // or the select() function returned a single node such as in '#id'
-  if (parameter && parameter.nodeName) {
-    parameter = [parameter];
+  else if (val.nodeType) {
+    nodes = [val]
   }
+  else if (Array.isArray(val)) {
+    nodes = val.filter(isNode)
+    if (nodes.length == 0) {
+      return emptyInst
+    }
+  }
+  else if (isArrayish(val)) {
+    if (val.length) {
+      nodes = slice(val)
+    } else {
+      return emptyInst
+    }
+  }
+  else {
+    nodes = [
+      // Default to a text node.
+      document.createTextNode(val)
+    ]
+  }
+  return new Umbrella(nodes)
+}
 
-  // Convert to an array, since there are many 'array-like' stuff in js-land
-  this.nodes = this.slice(parameter);
-};
+module.exports = u
 
-// Map u(...).length to u(...).nodes.length
-Object.defineProperty(u.prototype, 'length', {
-  get() { return this.nodes.length }
-});
+u.is = function(val) {
+  return val && val.constructor == Umbrella
+}
+
+u.addSelector = function(regex, select) {
+  selectors.push({
+    test: regex.test.bind(regex),
+    select,
+  })
+}
+
+// Expose the prototype and support `instanceof` checks.
+u.prototype = Umbrella.prototype
 
 // This made the code faster, read "Initializing instance variables" in
 // https://developers.google.com/speed/articles/optimizing-javascript
-u.prototype.nodes = [];
+u.prototype.nodes = []
 
-module.exports = u;
+Object.defineProperty(u.prototype, 'length', {
+  get() { return this.nodes.length }
+})
+
+// [INTERNAL USE ONLY]
+u.prototype.select = select
+u.prototype.slice = (vals) =>
+  vals && isArrayish(vals) ? slice(vals) : []
+
+//
+// Helpers
+//
+
+function renderMarkup(markup) {
+  const range = document.createRange()
+  range.setStart(document.body, 0)
+  return slice(range.createContextualFragment(markup).childNodes)
+}
+
+function isNode(val) {
+  return !!val.nodeType
+}
+
+function isArrayish(val) {
+  if (typeof val == 'object') {
+    return typeof val.length == 'number'
+  }
+  return false
+}
+
+// Convert an array-like object into a new array. https://goo.gl/Rc1Q2i
+function slice(vals) {
+  const len = vals.length
+  if (len) {
+    const arr = new Array(len)
+    for (let val, i = 0; i < len; i++) {
+      isNode(val = vals[i]) && (arr[i] = val)
+    }
+    return arr
+  }
+  return []
+}
+
+function select(selector, context) {
+  if (context) {
+    return context.querySelectorAll(selector)
+  }
+  for (let i = 0; i < selectors.length; i++) {
+    const {test, select} = selectors[i]
+    if (test(selector)) return select(selector)
+  }
+  return document.querySelectorAll(selector)
+}
+
+//
+// Built-in selectors
+//
+
+const selectors = []
+
+// Find nodes with the given class name.
+u.addSelector(/^\.[\w\-]+$/, function(val) {
+  return document.getElementsByClassName(val.slice(1))
+})
+
+// Find nodes with the given HTML tag.
+u.addSelector(/^\w+$/, function(val) {
+  return document.getElementsByTagName(val)
+})
+
+// Find the first node with the given `id` attribute.
+u.addSelector(/^\#[\w\-]+$/, function(val) {
+  return document.getElementById(val.slice(1))
+})
