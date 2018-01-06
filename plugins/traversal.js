@@ -61,12 +61,19 @@ Object.defineProperty(u.prototype, 'lastNode', {
 });
 
 
-// Travel the matched elements one node up
-u.prototype.parent = function (selector) {
-  return this.map(function (node) {
-    return node.parentNode;
-  }).filter(selector);
+u.prototype.parent = function(selector) {
+  if (this.length == 1) {
+    const parent = this.parentNode
+    return u(selector && !this._matches(selector, parent) ? null : parent)
+  } else {
+    const parents = this.map(getParent)
+    return selector ? parents.filter(selector) : parents
+  }
 };
+
+function getParent(node) {
+  return node.parentNode
+}
 
 
 Object.defineProperty(u.prototype, 'parentNode', {

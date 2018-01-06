@@ -114,6 +114,19 @@ u.prototype._matcher = function(selector) {
   return noop.false
 }
 
+u.prototype._matches = function(selector, node) {
+  if (typeof selector == 'string') {
+    return node.nodeType == 1 && nodeMatches(node, selector)
+  }
+  if (typeof selector == 'function') {
+    return selector(node, 0)
+  }
+  if (u.is(selector)) {
+    return selector.nodes.indexOf(node) > -1
+  }
+  return false
+}
+
 // [INTERNAL USE ONLY]
 // Select the adecuate part from the context
 u.prototype.select = function (parameter, context) {
