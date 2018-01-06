@@ -25,3 +25,9 @@ properties which are accessed using `.css(attr)`.
 
 [1]: https://github.com/Popmotion/framesync
 [2]: https://github.com/Popmotion/stylefire
+
+---
+## .render()
+
+Force all pending CSS mutations to be performed immediately,
+without waiting for the next `onFrameRender` step.

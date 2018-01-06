@@ -28,6 +28,15 @@ u.prototype.css = function() {
   return this
 }
 
+u.prototype.render = function() {
+  const {nodes} = this
+  for (let i = 0; i < nodes.length; i++) {
+    const style = nodes[i]._style
+    if (style) style.render()
+  }
+  return this
+}
+
 //
 // Helpers
 //
