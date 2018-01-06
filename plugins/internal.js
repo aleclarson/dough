@@ -1,5 +1,13 @@
 
 const u = require('./core');
+const noop = require('noop');
+
+// Non-standard names are still required. 😳
+const nodeMatches = Function.call.bind(
+  Element.prototype.matches ||
+  Element.prototype.msMatchesSelector ||
+  Element.prototype.webkitMatchesSelector
+);
 
 // [INTERNAL USE ONLY]
 // Add text in the specified position. It is used by other functions
@@ -92,6 +100,19 @@ u.prototype.isInPage = function isInPage (node) {
   return (node === document.body) ? false : document.body.contains(node);
 };
 
+u.prototype._matcher = function(selector) {
+  if (typeof selector == 'string') {
+    return (node) => node.nodeType == 1 && nodeMatches(node, selector)
+  }
+  if (typeof selector == 'function') {
+    return selector
+  }
+  if (u.is(selector)) {
+    const {nodes} = selector
+    return (node) => nodes.indexOf(node) != -1
+  }
+  return noop.false
+}
 
 // [INTERNAL USE ONLY]
 // Select the adecuate part from the context
