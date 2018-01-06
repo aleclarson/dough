@@ -39,26 +39,20 @@ u.prototype.adjacent = function (html, data, callback) {
 
 
 // [INTERNAL USE ONLY]
-
-// Normalize the arguments to an array of strings
-// Allow for several class names like "a b, c" and several parameters
-u.prototype.args = function (args, node, i) {
-  if (typeof args === 'function') {
-    args = args(node, i);
+u.prototype.args = function(args) {
+  if (Array.isArray(args)) {
+    return args
   }
-
-  // First flatten it all to a string http://stackoverflow.com/q/22920305
-  // If we try to slice a string bad things happen: ['n', 'a', 'm', 'e']
-  if (typeof args !== 'string') {
-    args = this.slice(args).map(this.str(node, i));
+  if (typeof args == 'string') {
+    return splitString(args)
   }
+  return this._slice(args).map(splitString)
+}
 
-  // Then convert that string to an array of not-null strings
-  return args.toString().split(/[\s,]+/).filter(function (e) {
-    return e.length;
-  });
-};
-
+// Split by whitespace
+function splitString(str) {
+  return str.trim().split(/ +/)
+}
 
 // [INTERNAL USE ONLY]
 // Loop through the combination of every node and every argument passed
