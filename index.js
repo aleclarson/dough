@@ -2,6 +2,7 @@
 require('./plugins/access');
 require('./plugins/array');
 require('./plugins/classes');
+require('./plugins/clone');
 require('./plugins/content');
 require('./plugins/css');
 require('./plugins/events');
