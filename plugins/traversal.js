@@ -55,6 +55,17 @@ Object.defineProperty(u.prototype, 'firstNode', {
 });
 
 
+const indexOf = Function.call.bind(Array.prototype.indexOf)
+u.prototype.index = function(arg) {
+  if (arguments.length == 0) {
+    const node = this.nodes[0]
+    return indexOf(node.parentNode.children, node)
+  } else {
+    return indexOf(this.nodes, u(arg).firstNode)
+  }
+}
+
+
 // Get the last of the nodes
 u.prototype.last = function () {
   const node = this.lastNode

@@ -165,6 +165,29 @@ Shorthand for `.nodes[0]`.
 
 
 ---
+## .index()
+
+With no arguments, this method finds the position of the first node
+within its siblings array.
+
+Otherwise, the argument is converted to an Umbrella object and its
+first node is searched for within the current node set.
+
+If no match is found, the result is `-1`.
+
+```js
+// Find index of first node within its siblings.
+u(nodes).index()
+
+// Find index of the first <div> node within `nodes`.
+u(nodes).index('div')
+
+// Find index of the first node (of the given Umbrella object) within `nodes`.
+u(nodes).index(u(value))
+```
+
+
+---
 ## .last()
 
 Returns a new Umbrella object containing the last node.
