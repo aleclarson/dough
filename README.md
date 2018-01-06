@@ -5,5 +5,6 @@ A fork of [umbrella](https://github.com/franciscop/umbrella).
 
 Thanks to [@franciscop](https://github.com/franciscop) for this awesome library.
 
-Look at [changelog.md](./changelog.md) for a list of changes I made.
+This fork does **not** support IE 10 and under.
 
+Look at [changelog.md](./changelog.md) for a list of changes I made.
