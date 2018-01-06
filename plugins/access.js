@@ -1,8 +1,9 @@
 
-const u = require('./plugins/core');
+const u = require('./core');
+const impl = u.prototype;
 const isObject = require('is-object');
 
-u.prototype.attr = function () {
+impl.attr = function() {
   const {nodes} = this
   let name = arguments[0]
   let value = arguments[1]
@@ -24,16 +25,16 @@ u.prototype.attr = function () {
   return this
 };
 
-Object.defineProperty(u.prototype, 'bounds', {
+Object.defineProperty(impl, 'bounds', {
   get() { return this.nodes[0].getBoundingClientRect() }
 });
 
 // Handle data-* attributes for the matched elements
-u.prototype.data = function (name, value) {
+impl.data = function(name, value) {
   return this.attr('data-' + name, value);
 };
 
-u.prototype.prop = function (name, value) {
+impl.prop = function(name, value) {
   const {nodes} = this
   if (arguments.length == 2) {
     for (let i = 0; i < nodes.length; i++) {
@@ -55,4 +56,3 @@ function setAttribute(nodes, name, value) {
     nodes[i].setAttribute(name, value)
   }
 }
-

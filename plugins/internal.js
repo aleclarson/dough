@@ -2,6 +2,8 @@
 const u = require('./core');
 const noop = require('noop');
 
+const impl = u.prototype;
+
 // Non-standard names are still required. 😳
 const nodeMatches = Function.call.bind(
   Element.prototype.matches ||
@@ -9,7 +11,7 @@ const nodeMatches = Function.call.bind(
   Element.prototype.webkitMatchesSelector
 );
 
-u.prototype._args = function(args) {
+impl._args = function(args) {
   if (Array.isArray(args)) {
     return args
   }
@@ -24,7 +26,7 @@ function splitString(str) {
   return str.trim().split(/ +/)
 }
 
-u.prototype._eacharg = function(args, iterator) {
+impl._eacharg = function(args, iterator) {
   const {nodes} = this
   if (nodes.length) {
     this._args(args).forEach(arg => {
@@ -36,7 +38,7 @@ u.prototype._eacharg = function(args, iterator) {
   return this
 }
 
-u.prototype._matcher = function(selector) {
+impl._matcher = function(selector) {
   if (typeof selector == 'string') {
     return (node) => node.nodeType == 1 && nodeMatches(node, selector)
   }
@@ -50,7 +52,7 @@ u.prototype._matcher = function(selector) {
   return noop.false
 }
 
-u.prototype._matches = function(selector, node) {
+impl._matches = function(selector, node) {
   if (typeof selector == 'string') {
     return node.nodeType == 1 && nodeMatches(node, selector)
   }

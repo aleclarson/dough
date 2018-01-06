@@ -1,8 +1,9 @@
 
 const u = require('./core');
-const Umbrella = u.prototype.constructor;
+const impl = u.prototype;
+const Umbrella = impl.constructor;
 
-u.prototype.array = function(iterator) {
+impl.array = function(iterator) {
   if (typeof iterator != 'function') {
     return this.nodes.slice()
   }
@@ -12,18 +13,18 @@ u.prototype.array = function(iterator) {
   }, [])
 }
 
-u.prototype.each = function(iterator) {
+impl.each = function(iterator) {
   this.nodes.forEach(iterator, this)
   return this
 }
 
-u.prototype.filter = function(selector) {
+impl.filter = function(selector) {
   if (!selector) return this
   const matches = this._matcher(selector)
   return new Umbrella(this.nodes.filter(matches))
 }
 
-u.prototype.map = function (iterator) {
+impl.map = function (iterator) {
   if (iterator) {
     const nodes = []
     this.array(iterator).forEach(node =>

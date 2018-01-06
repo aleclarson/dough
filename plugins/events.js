@@ -1,13 +1,14 @@
 
 const u = require('./core')
+const impl = u.prototype
 
-u.prototype.on = function(arg, listener, captures) {
+impl.on = function(arg, listener, captures) {
   return this._eacharg(arg, (node, eventId) =>
     addListener(node, eventId, listener, captures))
 }
 
 // NOTE: This method breaks in strict mode.
-u.prototype.once = function(arg, listener, captures) {
+impl.once = function(arg, listener, captures) {
   let once = listener._once
   if (!once) listener._once = once = function(event) {
     removeListener(this, event.type, once)
@@ -16,7 +17,7 @@ u.prototype.once = function(arg, listener, captures) {
   return this.on(arg, once, captures)
 }
 
-u.prototype.off = function(arg, listener) {
+impl.off = function(arg, listener) {
   // Check for one-time listeners.
   if (listener && listener._once) {
     listener = listener._once
@@ -25,7 +26,7 @@ u.prototype.off = function(arg, listener) {
     removeListener(node, eventId, listener))
 }
 
-u.prototype.trigger = function(arg, props) {
+impl.trigger = function(arg, props) {
   const {nodes} = this
   if (nodes.length) {
     this._args(arg).forEach(eventId => {

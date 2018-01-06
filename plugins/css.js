@@ -3,7 +3,9 @@ const u = require('./core')
 const css = require('stylefire/css')
 const isObject = require('is-object')
 
-u.prototype.css = function() {
+const impl = u.prototype
+
+impl.css = function() {
   const {nodes} = this
   let prop = arguments[0]
   if (nodes.length) {
@@ -28,7 +30,7 @@ u.prototype.css = function() {
   return this
 }
 
-u.prototype.render = function() {
+impl.render = function() {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
     const style = nodes[i]._style

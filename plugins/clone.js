@@ -1,7 +1,8 @@
 
 const u = require('./core');
+const impl = u.prototype;
 
-u.prototype.clone = function () {
+impl.clone = function() {
   return this.map(node => {
     const clone = node.cloneNode(true)
     mirror(node, clone)
@@ -13,7 +14,7 @@ u.prototype.clone = function () {
   })
 };
 
-u.prototype.mirror = mirror
+impl.mirror = mirror
 function mirror(src, dest) {
   for (let key in mirror) {
     mirror[key](src, dest)

@@ -1,7 +1,8 @@
 
 const u = require('./core');
+const impl = u.prototype;
 
-u.prototype.after = function() {
+impl.after = function() {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
     const after = nodes[i].nextSibling
@@ -10,7 +11,7 @@ u.prototype.after = function() {
   return this
 };
 
-u.prototype.append = function() {
+impl.append = function() {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
     const parent = nodes[i]
@@ -19,12 +20,12 @@ u.prototype.append = function() {
   return this
 };
 
-u.prototype.appendTo = function(parent, context) {
+impl.appendTo = function(parent, context) {
   if (parent) u(parent, context).append(this)
   return this
 };
 
-u.prototype.before = function() {
+impl.before = function() {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
     const after = nodes[i]
@@ -33,7 +34,7 @@ u.prototype.before = function() {
   return this
 };
 
-u.prototype.empty = function() {
+impl.empty = function() {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i]
@@ -44,7 +45,7 @@ u.prototype.empty = function() {
   return this
 };
 
-u.prototype.html = function(text) {
+impl.html = function(text) {
   if (arguments.length) {
     const {nodes} = this
     for (let i = 0; i < nodes.length; i++) {
@@ -55,7 +56,7 @@ u.prototype.html = function(text) {
   return this.nodes[0].innerHTML
 };
 
-u.prototype.prepend = function() {
+impl.prepend = function() {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
     const after = nodes[i].firstChild
@@ -64,16 +65,16 @@ u.prototype.prepend = function() {
   return this
 };
 
-u.prototype.prependTo = function(parent, context) {
+impl.prependTo = function(parent, context) {
   if (parent) u(parent, context).prepend(this)
   return this
 };
 
-u.prototype.remove = function() {
+impl.remove = function() {
   return this.each(removeNode)
 };
 
-u.prototype.text = function(text) {
+impl.text = function(text) {
   if (arguments.length) {
     const {nodes} = this
     for (let i = 0; i < nodes.length; i++) {
@@ -84,7 +85,7 @@ u.prototype.text = function(text) {
   return this.nodes[0].textContent
 };
 
-u.prototype.wrap = function(arg) {
+impl.wrap = function(arg) {
   const {nodes} = this
   if (arg && nodes.length) {
     for (let i = 0; i < nodes.length; i++) {

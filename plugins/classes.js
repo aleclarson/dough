@@ -1,7 +1,8 @@
 
 const u = require('./core')
+const impl = u.prototype
 
-u.prototype.addClass = function() {
+impl.addClass = function() {
   return this._eacharg(arguments, addClass)
 }
 
@@ -9,11 +10,11 @@ function addClass(node, name) {
   node.classList.add(name)
 }
 
-u.prototype.hasClass = function() {
+impl.hasClass = function() {
   return this.is('.' + this._args(arguments).join('.'))
 }
 
-u.prototype.is = function(selector) {
+impl.is = function(selector) {
   const {length} = this
   if (length == 1) {
     return this._matches(selector, this.firstNode)
@@ -26,7 +27,7 @@ u.prototype.is = function(selector) {
   return false
 }
 
-u.prototype.not = function(selector) {
+impl.not = function(selector) {
   const {length} = this
   if (length == 1) {
     return this._matches(selector, this.firstNode)
@@ -37,7 +38,7 @@ u.prototype.not = function(selector) {
   return this
 }
 
-u.prototype.removeClass = function() {
+impl.removeClass = function() {
   return this._eacharg(arguments, removeClass)
 }
 
@@ -45,7 +46,7 @@ function removeClass(node, name) {
   node.classList.remove(name)
 }
 
-u.prototype.toggleClass = function(arg, flag) {
+impl.toggleClass = function(arg, flag) {
   if (flag === !!flag) {
     return this[flag ? 'addClass' : 'removeClass'](arg)
   }
