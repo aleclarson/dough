@@ -38,6 +38,7 @@
   "dependencies": {
     "is-object": "^1.0.1",
     "is-promise": "^2.1.0",
-    "noop": "aleclarson/noop#0.0.1"
+    "noop": "aleclarson/noop#0.0.1",
+    "stylefire": "^1.1.8"
   }
 }
