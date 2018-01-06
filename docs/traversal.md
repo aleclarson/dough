@@ -86,6 +86,23 @@ u("li").closest('ul');
 
 
 ---
+## .eq()
+
+Reduce the set of nodes to the one at the given index.
+
+```js
+// Identical to `first()`
+u(nodes).eq(0)
+
+// Identical to `last()`
+u(nodes).eq(-1)
+
+// Identical to `u(nodes[1])`
+u(nodes).eq(1)
+```
+
+
+---
 ## .find()
 
 Get all of the descendants of the nodes with an optional filter

@@ -30,6 +30,12 @@ u.prototype.closest = function(selector) {
 }
 
 
+u.prototype.eq = function(index) {
+  const node = this.nodes[index < 0 ? this.length + index : index]
+  return node ? new Umbrella([node]) : u()
+};
+
+
 // Find all the nodes children of the current ones matched by a selector
 u.prototype.find = function (selector) {
   return this.map(function (node) {
