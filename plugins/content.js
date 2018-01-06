@@ -64,6 +64,11 @@ u.prototype.prepend = function() {
   return this
 };
 
+u.prototype.prependTo = function(parent, context) {
+  if (parent) u(parent, context).prepend(this)
+  return this
+};
+
 u.prototype.remove = function() {
   return this.each(removeNode)
 };
