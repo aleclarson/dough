@@ -1,75 +1,67 @@
 
 const u = require('./core');
 
-// Add some html as a sibling after each of the matched elements.
-u.prototype.after = function (html, data) {
-  return this.adjacent(html, data, function (node, fragment) {
-    node.parentNode.insertBefore(fragment, node.nextSibling);
-  });
-};
-
-
-// Add some html as a child at the end of each of the matched elements.
-u.prototype.append = function (html, data) {
-  return this.adjacent(html, data, function (node, fragment) {
-    node.appendChild(fragment);
-  });
-};
-
-
-// Add some html before each of the matched elements.
-u.prototype.before = function (html, data) {
-  return this.adjacent(html, data, function (node, fragment) {
-    node.parentNode.insertBefore(fragment, node);
-  });
-};
-
-
-// Remove all children of the matched nodes from the DOM.
-u.prototype.empty = function () {
-  return this.each(function (node) {
-    while (node.firstChild) {
-      node.removeChild(node.firstChild);
-    }
-  });
-};
-
-
-// Set or retrieve the html from the matched node(s)
-u.prototype.html = function (text) {
-  // Needs to check undefined as it might be ""
-  if (text === undefined) {
-    return this.first().innerHTML || '';
+u.prototype.after = function() {
+  const {nodes} = this
+  for (let i = 0; i < nodes.length; i++) {
+    const after = nodes[i].nextSibling
+    eachNode(arguments, insertBefore, after)
   }
-
-  // If we're attempting to set some text
-  // Loop through all the nodes
-  return this.each(function (node) {
-    // Set the inner html to the node
-    node.innerHTML = text;
-  });
+  return this
 };
 
-
-// Add nodes at the beginning of each node
-u.prototype.prepend = function (html, data) {
-  return this.adjacent(html, data, function (node, fragment) {
-    node.insertBefore(fragment, node.firstChild);
-  });
+u.prototype.append = function() {
+  const {nodes} = this
+  for (let i = 0; i < nodes.length; i++) {
+    const parent = nodes[i]
+    eachNode(arguments, appendChild, parent)
+  }
+  return this
 };
 
+u.prototype.before = function() {
+  const {nodes} = this
+  for (let i = 0; i < nodes.length; i++) {
+    const after = nodes[i]
+    eachNode(arguments, insertBefore, after)
+  }
+  return this
+};
 
-// Delete the matched nodes from the DOM
-u.prototype.remove = function () {
-  // Loop through all the nodes
-  return this.each(function (node) {
-    // Perform the removal only if the node has a parent
-    if (node.parentNode) {
-      node.parentNode.removeChild(node);
+u.prototype.empty = function() {
+  const {nodes} = this
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i]
+    while (node.firstChild) {
+      node.removeChild(node.firstChild)
     }
-  });
+  }
+  return this
 };
 
+u.prototype.html = function(text) {
+  if (arguments.length) {
+    const {nodes} = this
+    for (let i = 0; i < nodes.length; i++) {
+      nodes[i].innerHTML = text
+    }
+    return this
+  }
+  return this.nodes[0].innerHTML
+};
+
+u.prototype.prepend = function() {
+  const {nodes} = this
+  for (let i = 0; i < nodes.length; i++) {
+    const after = nodes[i].firstChild
+    eachNode(arguments, insertBefore, after)
+  }
+  return this
+};
+
+u.prototype.remove = function() {
+  return this.each(removeNode)
+};
 
 // Replace the matched elements with the passed argument.
 u.prototype.replace = function (html, data) {
@@ -81,42 +73,72 @@ u.prototype.replace = function (html, data) {
   return u(nodes);
 };
 
-
-// Set or retrieve the text content from the matched node(s)
-u.prototype.text = function (text) {
-  // Needs to check undefined as it might be ""
-  if (text === undefined) {
-    return this.first().textContent || '';
-  }
-
-  // If we're attempting to set some text
-  // Loop through all the nodes
-  return this.each(function (node) {
-    // Set the text content to the node
-    node.textContent = text;
-  });
-};
-
-
-u.prototype.wrap = function (selector) {
-  function findDeepestNode (node) {
-    while (node.firstElementChild) {
-      node = node.firstElementChild;
+u.prototype.text = function(text) {
+  if (arguments.length) {
+    const {nodes} = this
+    for (let i = 0; i < nodes.length; i++) {
+      nodes[i].textContent = text
     }
-
-    return u(node);
+    return this
   }
-  // 1) Construct dom node e.g. u('<a>'),
-  // 2) clone the currently matched node
-  // 3) append cloned dom node to constructed node based on selector
-  return this.map(function (node) {
-    return u(selector).each(function (n) {
-      findDeepestNode(n)
-        .append(node.cloneNode(true));
-
-      node
-        .parentNode
-        .replaceChild(n, node);
-    });
-  });
+  return this.nodes[0].textContent
 };
+
+u.prototype.wrap = function(arg) {
+  const {nodes} = this
+  if (arg && nodes.length) {
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i]
+      if (typeof arg == 'function') {
+        withNode(arg.call(node), wrapNode, node)
+      } else {
+        withNode(arg, wrapNode, node)
+      }
+    }
+  }
+  return this
+};
+
+//
+// Helpers
+//
+
+function insertBefore(node) {
+  removeNode(node)
+  this.parentNode.insertBefore(node, this)
+}
+
+function appendChild(node) {
+  removeNode(node)
+  this.appendChild(node)
+}
+
+function wrapNode(wrapper) {
+  const parent = this.parentNode
+  if (parent) parent.replaceChild(wrapper, this)
+  wrapper.appendChild(this)
+}
+
+function removeNode(node) {
+  if (node.parentNode) {
+    node.parentNode.removeChild(node)
+  }
+}
+
+function eachNode(args, fn, ctx) {
+  for (let i = 0; i < args.length; i++) {
+    withNode(args[i], fn, ctx)
+  }
+}
+
+function withNode(arg, fn, ctx) {
+  if (arg != null) {
+    if (u.is(arg)) {
+      arg.nodes.forEach(fn, ctx)
+    } else if (arg.nodeType) {
+      fn.call(ctx, arg)
+    } else {
+      u._fragment(arg).childNodes.forEach(fn, ctx)
+    }
+  }
+}
