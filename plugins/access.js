@@ -24,6 +24,10 @@ u.prototype.attr = function () {
   return this
 };
 
+Object.defineProperty(u.prototype, 'bounds', {
+  get() { return this.nodes[0].getBoundingClientRect() }
+});
+
 // Handle data-* attributes for the matched elements
 u.prototype.data = function (name, value) {
   return this.attr('data-' + name, value);
@@ -40,11 +44,6 @@ u.prototype.prop = function (name, value) {
   if (nodes.length) {
     return nodes[0][name]
   }
-};
-
-// Find the size of the first matched element
-u.prototype.size = function () {
-  return this.first().getBoundingClientRect();
 };
 
 //
