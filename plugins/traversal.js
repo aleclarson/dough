@@ -19,17 +19,15 @@ Object.defineProperty(u.prototype, 'childNodes', {
 });
 
 
-// Find the first ancestor that matches the selector for each node
-u.prototype.closest = function (selector) {
-  return this.map(function (node) {
-    // Keep going up and up on the tree. First element is also checked
-    do {
-      if (u(node).is(selector)) {
-        return node;
-      }
-    } while ((node = node.parentNode) && node !== document);
-  });
-};
+u.prototype.closest = function(selector) {
+  const matches = this._matcher(selector)
+  return this.map((node, i) => {
+    while (node && node != document) {
+      if (matches(node, i)) return node
+      node = node.parentNode
+    }
+  })
+}
 
 
 // Find all the nodes children of the current ones matched by a selector
