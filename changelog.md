@@ -10,6 +10,7 @@ This is the list of changes I've made so far:
 
 ### Added
 
+- `ready()` similar to [jQuery `ready`](https://api.jquery.com/ready/)
 - `eq()` similar to [jQuery `eq`](https://api.jquery.com/eq/)
 - `index()` similar to [jQuery `index`](https://api.jquery.com/index/)
 - `css()` using [stylefire](https://github.com/Popmotion/stylefire)
