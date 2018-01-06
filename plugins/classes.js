@@ -1,56 +1,57 @@
 
-const u = require('./core');
+const u = require('./core')
 
-// Add class(es) to the matched nodes
-u.prototype.addClass = function () {
-  return this.eacharg(arguments, function (el, name) {
-    el.classList.add(name);
-  });
-};
+u.prototype.addClass = function() {
+  return this.eacharg(arguments, addClass)
+}
 
+function addClass(node, name) {
+  node.classList.add(name)
+}
 
-// Find out whether the matched elements have a class or not
-u.prototype.hasClass = function () {
-  // Check if any of them has all of the classes
-  return this.is('.' + this.args(arguments).join('.'));
-};
+u.prototype.hasClass = function() {
+  return this.is('.' + this.args(arguments).join('.'))
+}
 
-
-// Check whether any of the nodes matches the selector
-u.prototype.is = function (selector) {
-  return this.filter(selector).length > 0;
-};
-
-
-// Delete all of the nodes that equals the filter
-u.prototype.not = function (filter) {
-  return this.filter(function (node) {
-    return !u(node).is(filter || true);
-  });
-};
-
-
-// Removes a class from all of the matched nodes
-u.prototype.removeClass = function () {
-  // Loop the combination of each node with each argument
-  return this.eacharg(arguments, function (el, name) {
-    // Remove the class using the native method
-    el.classList.remove(name);
-  });
-};
-
-
-// Activate/deactivate classes in the elements
-u.prototype.toggleClass = function (classes, addOrRemove) {
-  /* jshint -W018 */
-  // Check if addOrRemove was passed as a boolean
-  if (!!addOrRemove === addOrRemove) {
-    return this[addOrRemove ? 'addClass' : 'removeClass'](classes);
+u.prototype.is = function(selector) {
+  const {length} = this
+  if (length == 1) {
+    return this._matches(selector, this.firstNode)
+  } else if (length) {
+    const matches = this._matcher(selector)
+    for (let i = 0; i < this.nodes.length; i++) {
+      if (matches(this.nodes[i], i)) return true
+    }
   }
-  /* jshint +W018 */
+  return false
+}
 
-  // Loop through all the nodes and classes combinations
-  return this.eacharg(classes, function (el, name) {
-    el.classList.toggle(name);
-  });
-};
+u.prototype.not = function(selector) {
+  const {length} = this
+  if (length == 1) {
+    return this._matches(selector, this.firstNode)
+  } else if (length) {
+    const matches = this._matcher(selector)
+    return this.filter((node, i) => !matches(node, i))
+  }
+  return this
+}
+
+u.prototype.removeClass = function() {
+  return this.eacharg(arguments, removeClass)
+}
+
+function removeClass(node, name) {
+  node.classList.remove(name)
+}
+
+u.prototype.toggleClass = function(arg, flag) {
+  if (flag === !!flag) {
+    return this[flag ? 'addClass' : 'removeClass'](arg)
+  }
+  return this.eacharg(arg, toggleClass)
+}
+
+function toggleClass(node, name) {
+  node.classList.toggle(name)
+}
