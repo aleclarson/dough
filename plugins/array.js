@@ -1,5 +1,6 @@
 
 const u = require('./core');
+const Umbrella = u.prototype.constructor;
 
 u.prototype.array = function(iterator) {
   if (typeof iterator != 'function') {
@@ -50,7 +51,12 @@ u.prototype.filter = function (selector) {
 };
 
 
-// Merge all of the nodes that the callback returns
-u.prototype.map = function (callback) {
-  return callback ? u(this.array(callback)).unique() : this;
-};
+u.prototype.map = function (iterator) {
+  if (iterator) {
+    const nodes = []
+    this.array(iterator).forEach(node =>
+      ~nodes.indexOf(node) || nodes.push(node))
+    return new Umbrella(nodes)
+  }
+  return this
+}
