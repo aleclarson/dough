@@ -29,6 +29,19 @@ u.prototype.data = function (name, value) {
   return this.attr('data-' + name, value);
 };
 
+u.prototype.prop = function (name, value) {
+  const {nodes} = this
+  if (arguments.length == 2) {
+    for (let i = 0; i < nodes.length; i++) {
+      nodes[i][name] = value
+    }
+    return this
+  }
+  if (nodes.length) {
+    return nodes[0][name]
+  }
+};
+
 // Find the size of the first matched element
 u.prototype.size = function () {
   return this.first().getBoundingClientRect();
