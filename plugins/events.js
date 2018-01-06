@@ -6,7 +6,21 @@ u.prototype.on = function(arg, listener, captures) {
     addListener(node, eventId, listener, captures))
 }
 
+// NOTE: This method breaks in strict mode.
+u.prototype.once = function(arg, listener, captures) {
+  let once = listener._once
+  if (!once) listener._once = once = function(event) {
+    removeListener(this, event.type, once)
+    listener.call(this, event)
+  }
+  return this.on(arg, once, captures)
+}
+
 u.prototype.off = function(arg, listener) {
+  // Check for one-time listeners.
+  if (listener && listener._once) {
+    listener = listener._once
+  }
   return this.eacharg(arg, (node, eventId) =>
     removeListener(node, eventId, listener))
 }

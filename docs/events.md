@@ -136,6 +136,23 @@ u('input').on('change click blur paste', function(){
 
 
 ---
+## .once()
+
+Attach an event listener for every node in the set. Each listener will
+remove itself after being called for the first time.
+
+One-time listeners can be removed early with the `off()` method.
+
+**NOTE:** This method won't work in strict mode.
+
+```js
+u(nodes).once('click', function(event) {
+  u(this) // `this` is a node!
+})
+```
+
+
+---
 ## .trigger()
 
 Calls an event on all of the matched nodes
