@@ -50,6 +50,11 @@ u.prototype.first = function () {
 };
 
 
+Object.defineProperty(u.prototype, 'firstChild', {
+  get() { return this.nodes[0].firstChild }
+});
+
+
 Object.defineProperty(u.prototype, 'firstNode', {
   get() { return this.nodes[0] }
 });
@@ -71,6 +76,11 @@ u.prototype.last = function () {
   const node = this.lastNode
   return node ? new Umbrella([node]) : this
 };
+
+
+Object.defineProperty(u.prototype, 'lastChild', {
+  get() { return this.nodes[0].lastChild }
+});
 
 
 Object.defineProperty(u.prototype, 'lastNode', {
