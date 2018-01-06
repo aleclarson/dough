@@ -1,71 +1,119 @@
 
-const u = require('./core');
+const u = require('./core')
 
-// Removes the callback to the event listener for each node
-u.prototype.off = function (events) {
-  return this.eacharg(events, function (node, event) {
-    u(node._e ? node._e[event] : []).each(function (cb) {
-      node.removeEventListener(event, cb);
-    });
-  });
-};
+u.prototype.on = function(arg, listener, captures) {
+  return this.eacharg(arg, (node, eventId) =>
+    addListener(node, eventId, listener, captures))
+}
 
+u.prototype.off = function(arg, listener) {
+  return this.eacharg(arg, (node, eventId) =>
+    removeListener(node, eventId, listener))
+}
 
-// Attach a callback to the specified events
-u.prototype.on = function (events, cb, cb2) {
-  if (typeof cb === 'string') {
-    var sel = cb;
-    cb = function (e) {
-      var args = arguments;
-      u(e.currentTarget).find(sel).each(function (target) {
-        if (target === e.target || target.contains(e.target)) {
-          try {
-            Object.defineProperty(e, 'currentTarget', {
-              get: function () {
-                return target;
-              }
-            });
-          } catch (err) {}
-          cb2.apply(target, args);
+u.prototype.trigger = function(arg, props) {
+  const {nodes} = this
+  if (nodes.length) {
+    this.args(arg).forEach(eventId => {
+      if (typeof eventId == 'string') {
+        const event = createEvent(eventId, props)
+        for (let i = 0; i < nodes.length; i++) {
+          nodes[i].dispatchEvent(event)
         }
-      });
-    };
+      }
+    })
   }
+  return this
+}
 
-  // Add the custom data as arguments to the callback
-  var callback = function (e) {
-    return cb.apply(this, [e].concat(e.detail || []));
-  };
+//
+// Helpers
+//
 
-  return this.eacharg(events, function (node, event) {
-    node.addEventListener(event, callback);
+function addListener(node, eventId, listener, captures) {
+  node.addEventListener(eventId, listener, captures || false)
+  if (!node._e) node._e = {}
+  const listeners = node._e[eventId]
+  if (listeners) {
+    listeners.push(listener)
+  } else {
+    node._e[eventId] = [listener]
+  }
+}
 
-    // Store it so we can dereference it with `.off()` later on
-    node._e = node._e || {};
-    node._e[event] = node._e[event] || [];
-    node._e[event].push(callback);
-  });
-};
-
-
-// Call an event manually on all the nodes
-u.prototype.trigger = function (events) {
-  var data = this.slice(arguments).slice(1);
-
-  return this.eacharg(events, function (node, event) {
-    var ev;
-
-    // Allow the event to bubble up and to be cancelable (as default)
-    var opts = { bubbles: true, cancelable: true, detail: data };
-
-    try {
-      // Accept different types of event names or an event itself
-      ev = new window.CustomEvent(event, opts);
-    } catch (e) {
-      ev = document.createEvent('CustomEvent');
-      ev.initCustomEvent(event, true, true, data);
+function removeListener(node, eventId, listener) {
+  const listeners = node._e && node._e[eventId]
+  if (!listeners) return
+  if (listener) {
+    const index = listeners.indexOf(listener)
+    if (index > -1) {
+      node.removeEventListener(eventId, listener)
+      if (listeners.length > 1) {
+        listeners.splice(index, 1)
+      } else {
+        delete node._e[eventId]
+      }
     }
+  } else {
+    events.forEach(listener =>
+      node.removeEventListener(eventId, listener))
+    delete node._e[eventId]
+  }
+}
 
-    node.dispatchEvent(ev);
-  });
-};
+function createEvent(eventId, props) {
+  const eventType = nativeEvents[eventId] || Event
+  const bubbles = eventType == Event ?
+    props.bubbles !== false : nativeBubbles.indexOf(eventId) > -1
+
+  const event = new eventType(eventId, {bubbles, cancelable: true})
+  if (props) {
+    Object.assign(event, props)
+  }
+  return event
+}
+
+// Native types
+const ui = UIEvent
+const focus = FocusEvent
+const input = InputEvent
+const mouse = MouseEvent
+const keyboard = KeyboardEvent
+
+// Native events
+const nativeEvents = {
+  load: ui,
+  unload: ui,
+  abort: ui,
+  error: ui,
+  select: ui,
+  change: ui,
+  submit: ui,
+  reset: ui,
+  resize: ui,
+  scroll: ui,
+  focusin: focus,
+  focus: focus,
+  focusout: focus,
+  blur: focus,
+  beforeinput: input,
+  input: input,
+  click: mouse,
+  dblclick: mouse,
+  mouseenter: mouse,
+  mouseover: mouse,
+  mousedown: mouse,
+  mousemove: mouse,
+  mouseup: mouse,
+  mouseout: mouse,
+  mouseleave: mouse,
+  keydown: keyboard,
+  keyup: keyboard,
+}
+
+// https://www.w3.org/TR/DOM-Level-3-Events
+const nativeBubbles = [
+  'select', 'focusin', 'focusout', 'beforeinput', 'input',
+  'click', 'dblclick', 'mouseover', 'mousedown', 'mousemove',
+  'mouseup', 'mouseout', 'keydown', 'keyup',
+]
