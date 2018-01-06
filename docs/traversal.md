@@ -39,6 +39,12 @@ u("ul").children('li:first-child');
 
 
 ---
+## .childNodes
+
+Shorthand for `.nodes[0].childNodes`.
+
+
+---
 ## .closest()
 
 Find the first ancestor that matches the selector for each node
@@ -134,11 +140,25 @@ u('form').on('submit', function(e){
 Returns a new Umbrella object containing the first node.
 If the node list is empty, `this` is returned.
 
+
+---
+## .firstNode
+
+Shorthand for `.nodes[0]`.
+
+
 ---
 ## .last()
 
 Returns a new Umbrella object containing the last node.
 If the node list is empty, `this` is returned.
+
+
+---
+## .lastNode
+
+Shorthand for `.nodes[.length - 1]`.
+
 
 ---
 ## .parent()
@@ -181,6 +201,13 @@ u('a').parent('p');
 [.find()](#find) get all of the descendants of the matched nodes
 
 [.closest()](#closest) get the first ascendant that matches the selector
+
+
+---
+## .parentNode
+
+Shorthand for `.nodes[0].parentNode`.
+
 
 ---
 ## .siblings()

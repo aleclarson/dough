@@ -10,6 +10,11 @@ u.prototype.children = function (selector) {
 };
 
 
+Object.defineProperty(u.prototype, 'childNodes', {
+  get() { return this.nodes[0].childNodes }
+});
+
+
 // Find the first ancestor that matches the selector for each node
 u.prototype.closest = function (selector) {
   return this.map(function (node) {
@@ -37,11 +42,21 @@ u.prototype.first = function () {
 };
 
 
+Object.defineProperty(u.prototype, 'firstNode', {
+  get() { return this.nodes[0] }
+});
+
+
 // Get the last of the nodes
 u.prototype.last = function () {
   const node = this.lastNode
   return node ? new Umbrella([node]) : this
 };
+
+
+Object.defineProperty(u.prototype, 'lastNode', {
+  get() { return this.nodes[this.nodes.length - 1] }
+});
 
 
 // Travel the matched elements one node up
@@ -50,6 +65,11 @@ u.prototype.parent = function (selector) {
     return node.parentNode;
   }).filter(selector);
 };
+
+
+Object.defineProperty(u.prototype, 'parentNode', {
+  get() { return this.nodes[0].parentNode }
+});
 
 
 // Travel the matched elements at the same level
