@@ -1,5 +1,5 @@
 
-const markupRE = /^\s*</
+const htmlRE = /^\s*</
 const emptyInst = Object.create(Umbrella.prototype)
 
 function Umbrella(nodes) {
@@ -17,9 +17,8 @@ function u(val, context) {
   }
   let nodes
   if (typeof val == 'string') {
-    // Generate HTML node from markup.
-    if (markupRE.test(val)) {
-      nodes = renderMarkup(val)
+    if (htmlRE.test(val)) {
+      nodes = slice(fragment(val).childNodes)
     } else {
       nodes = select(val, context)
       if (!nodes) return emptyInst
@@ -99,6 +98,7 @@ Object.defineProperty(u.prototype, 'length', {
 })
 
 // [INTERNAL USE ONLY]
+u._fragment = fragment
 u.prototype.select = select
 u.prototype.slice = (vals) =>
   vals && isArrayish(vals) ? slice(vals) : []
@@ -107,10 +107,10 @@ u.prototype.slice = (vals) =>
 // Helpers
 //
 
-function renderMarkup(markup) {
+function fragment(html) {
   const range = document.createRange()
   range.setStart(document.body, 0)
-  return slice(range.createContextualFragment(markup).childNodes)
+  return range.createContextualFragment(html || '')
 }
 
 function isNode(val) {
