@@ -2,7 +2,7 @@
 const u = require('./core')
 
 u.prototype.addClass = function() {
-  return this.eacharg(arguments, addClass)
+  return this._eacharg(arguments, addClass)
 }
 
 function addClass(node, name) {
@@ -10,7 +10,7 @@ function addClass(node, name) {
 }
 
 u.prototype.hasClass = function() {
-  return this.is('.' + this.args(arguments).join('.'))
+  return this.is('.' + this._args(arguments).join('.'))
 }
 
 u.prototype.is = function(selector) {
@@ -38,7 +38,7 @@ u.prototype.not = function(selector) {
 }
 
 u.prototype.removeClass = function() {
-  return this.eacharg(arguments, removeClass)
+  return this._eacharg(arguments, removeClass)
 }
 
 function removeClass(node, name) {
@@ -49,7 +49,7 @@ u.prototype.toggleClass = function(arg, flag) {
   if (flag === !!flag) {
     return this[flag ? 'addClass' : 'removeClass'](arg)
   }
-  return this.eacharg(arg, toggleClass)
+  return this._eacharg(arg, toggleClass)
 }
 
 function toggleClass(node, name) {

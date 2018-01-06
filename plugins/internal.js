@@ -9,16 +9,15 @@ const nodeMatches = Function.call.bind(
   Element.prototype.webkitMatchesSelector
 );
 
-
 // [INTERNAL USE ONLY]
-u.prototype.args = function(args) {
+u.prototype._args = function(args) {
   if (Array.isArray(args)) {
     return args
   }
   if (typeof args == 'string') {
     return splitString(args)
   }
-  return this._slice(args).map(splitString)
+  return u._slice(args).map(splitString)
 }
 
 // Split by whitespace
@@ -27,10 +26,10 @@ function splitString(str) {
 }
 
 // [INTERNAL USE ONLY]
-u.prototype.eacharg = function(args, iterator) {
+u.prototype._eacharg = function(args, iterator) {
   const {nodes} = this
   if (nodes.length) {
-    this.args(args).forEach(arg => {
+    this._args(args).forEach(arg => {
       for (let i = 0; i < nodes.length; i++) {
         iterator.call(this, nodes[i], arg)
       }

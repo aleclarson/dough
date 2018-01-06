@@ -99,8 +99,8 @@ Object.defineProperty(u.prototype, 'length', {
 
 // [INTERNAL USE ONLY]
 u._fragment = fragment
-u.prototype.select = select
-u.prototype.slice = (vals) =>
+u._select = select
+u._slice = (vals) =>
   vals && isArrayish(vals) ? slice(vals) : []
 
 //

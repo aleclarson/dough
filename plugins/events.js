@@ -2,7 +2,7 @@
 const u = require('./core')
 
 u.prototype.on = function(arg, listener, captures) {
-  return this.eacharg(arg, (node, eventId) =>
+  return this._eacharg(arg, (node, eventId) =>
     addListener(node, eventId, listener, captures))
 }
 
@@ -21,14 +21,14 @@ u.prototype.off = function(arg, listener) {
   if (listener && listener._once) {
     listener = listener._once
   }
-  return this.eacharg(arg, (node, eventId) =>
+  return this._eacharg(arg, (node, eventId) =>
     removeListener(node, eventId, listener))
 }
 
 u.prototype.trigger = function(arg, props) {
   const {nodes} = this
   if (nodes.length) {
-    this.args(arg).forEach(eventId => {
+    this._args(arg).forEach(eventId => {
       if (typeof eventId == 'string') {
         const event = createEvent(eventId, props)
         for (let i = 0; i < nodes.length; i++) {
