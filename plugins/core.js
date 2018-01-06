@@ -63,6 +63,15 @@ u.is = function(val) {
   return val && val.constructor == Umbrella
 }
 
+u.text = function() {
+  const nodes = new Array(arguments.length)
+  for (let i = 0; i < arguments.length; i++) {
+    const val = arguments[i]
+    nodes.push(document.createTextNode(val))
+  }
+  return new Umbrella(nodes)
+}
+
 u.addSelector = function(regex, select) {
   selectors.push({
     test: regex.test.bind(regex),
