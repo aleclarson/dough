@@ -1,3 +1,4 @@
+// TODO: add `pause` and `resume` methods
 
 const u = require('./core')
 
@@ -25,6 +26,17 @@ u.prototype.tween = function(arg) {
     throw TypeError('Expected an object or string')
   }
   return _animate.call(this, arg)
+}
+
+u.prototype.stop = function(attr) {
+  const {nodes} = this
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i]
+    if (node._anims) {
+      const anim = node._anims[attr]
+      if (anim) anim.stop()
+    }
+  }
 }
 
 //

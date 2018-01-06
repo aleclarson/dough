@@ -35,3 +35,19 @@ since that's what this method uses. Read more [here][3].
 [1]: https://popmotion.io/api/css/
 [2]: http://cubic-bezier.com
 [3]: https://popmotion.io/api/
+
+---
+## .stop()
+
+Stop an animation before it completes.
+
+Nothing happens if the given style prop is not being animated.
+
+Remember that `.css()` and `.tween()` will stop animations on their own.
+
+This method looks for an active animation on every node.
+
+```js
+// Stop the color animation of every link element.
+u('a').stop('color')
+```
