@@ -44,8 +44,9 @@ u.prototype.trigger = function(arg, props) {
 // Helpers
 //
 
-function addListener(node, eventId, listener, captures) {
-  node.addEventListener(eventId, listener, captures || false)
+function addListener(node, eventId, listener, captures = false) {
+  listener._captures = captures
+  node.addEventListener(eventId, listener, captures)
   if (!node._e) node._e = {}
   const listeners = node._e[eventId]
   if (listeners) {
