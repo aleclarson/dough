@@ -1,49 +1,22 @@
 ## .array()
 
-Extract structured data from the DOM.
+Call the given function for every node in the set.
+The function can return anything that the Umbrella constructor accepts,
+but falsy values are ignored. The return values are combined into
+a single array of DOM nodes.
+
+If no function is passed, the entire node set is returned in a new array.
+
+**NOTE:** The resulting array does not deduplicate the node set.
+You should use the `map()` method for that.
 
 ```js
-.array()
-.array(callback)
+// Create an array of the even DOM nodes in the set.
+u(nodes).array((node, index) => index % 2 ? null : node)
+
+// Create an array of the entire set of DOM nodes.
+u(nodes).array()
 ```
-
-### Parameters
-
-`callback = function(node, i){ return node.innerHTML }`: a callback to be called on each node. The returned value is the one set on the final version. If an array is returned then these elements are added to the set. However, if nothing or null is returned it removes them.
-
-
-### Return
-
-A simple javascript array consisting on the elements returned by the callback
-
-
-
-### Example
-
-```html
-<ul>
-  <li>Peter</li>
-  <li>Mery</li>
-  <li>John</li>
-</ul>
-```
-
-Javascript (by default):
-
-```js
-u('ul li').array();
-// ['Peter', 'Mery', 'John']
-```
-
-Javascript (with custom callback):
-
-```js
-u('ul li').array(function(node){
-  return { name: u(node).text() };
-});
-// [{ name: 'Peter' }, { name: 'Mery' }, { name: 'John' }]
-```
-
 
 ---
 ## .each()
