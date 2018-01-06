@@ -9,7 +9,6 @@ const nodeMatches = Function.call.bind(
   Element.prototype.webkitMatchesSelector
 );
 
-// [INTERNAL USE ONLY]
 u.prototype._args = function(args) {
   if (Array.isArray(args)) {
     return args
@@ -25,7 +24,6 @@ function splitString(str) {
   return str.trim().split(/ +/)
 }
 
-// [INTERNAL USE ONLY]
 u.prototype._eacharg = function(args, iterator) {
   const {nodes} = this
   if (nodes.length) {
@@ -37,17 +35,6 @@ u.prototype._eacharg = function(args, iterator) {
   }
   return this
 }
-
-
-/**
- * Internal use only. This function checks to see if an element is in the page's body. As contains is inclusive and determining if the body contains itself isn't the intention of isInPage this case explicitly returns false.
-https://developer.mozilla.org/en-US/docs/Web/API/Node/contains
- * @param  {[Object]}  node DOM node
- * @return {Boolean}        The Node.contains() method returns a Boolean value indicating whether a node is a descendant of a given node or not.
- */
-u.prototype.isInPage = function isInPage (node) {
-  return (node === document.body) ? false : document.body.contains(node);
-};
 
 u.prototype._matcher = function(selector) {
   if (typeof selector == 'string') {
@@ -75,18 +62,3 @@ u.prototype._matches = function(selector, node) {
   }
   return false
 }
-
-// [INTERNAL USE ONLY]
-
-// Create a string from different things
-u.prototype.str = function (node, i) {
-  return function (arg) {
-    // Call the function with the corresponding nodes
-    if (typeof arg === 'function') {
-      return arg.call(this, node, i);
-    }
-
-    // From an array or other 'weird' things
-    return arg.toString();
-  };
-};
