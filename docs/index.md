@@ -64,3 +64,25 @@ Create one or more text nodes.
 ```js
 u.text('hello', 'world')
 ```
+
+## u.isText()
+
+Check if a value is a `TextNode` instance.
+
+```js
+u.isText(u(false)) // => true
+u.isText(u.text('hello')) // => true
+u.isText(document.createElement('div')) // => false
+```
+
+## u.isNode()
+
+Check if a value is a `Node` instance.
+
+The given node must have its `nodeType` property equal to `1`,
+which means this function returns false for text nodes.
+
+```js
+u.isNode(document.createElement('div')) // => true
+u.isNode(null) // => false
+```

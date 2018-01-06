@@ -63,6 +63,14 @@ u.is = function(val) {
   return val && val.constructor == Umbrella
 }
 
+u.isElem = function(val) {
+  return val && val.nodeType == 1
+}
+
+u.isText = function(val) {
+  return val && val.nodeType == 3
+}
+
 u.text = function() {
   const nodes = new Array(arguments.length)
   for (let i = 0; i < arguments.length; i++) {
