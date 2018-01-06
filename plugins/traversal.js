@@ -1,5 +1,6 @@
 
 const u = require('./core');
+const Umbrella = u.prototype.constructor;
 
 // Get the direct children of all of the nodes with an optional filter
 u.prototype.children = function (selector) {
@@ -30,15 +31,16 @@ u.prototype.find = function (selector) {
 };
 
 
-// Get the first of the nodes
 u.prototype.first = function () {
-  return this.nodes[0] || false;
+  const node = this.nodes[0]
+  return node ? new Umbrella([node]) : this
 };
 
 
-  // Get the last of the nodes
+// Get the last of the nodes
 u.prototype.last = function () {
-  return this.nodes[this.length - 1] || false;
+  const node = this.lastNode
+  return node ? new Umbrella([node]) : this
 };
 
 

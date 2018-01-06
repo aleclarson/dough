@@ -131,73 +131,14 @@ u('form').on('submit', function(e){
 ---
 ## .first()
 
-Retrieve the first of the matched nodes
-
-```js
-.first();
-```
-
-
-### Parameters
-
-This method doesn't accept any parameters
-
-
-### Return
-
-The first html node or false if there is none.
-
-
-
-### Examples
-
-Retrieve the first element of a list:
-
-```js
-var next = u("ul.demo li").first();
-```
-
-
-
-### Related
-
-[.last()](#last) retrieve the last matched element
+Returns a new Umbrella object containing the first node.
+If the node list is empty, `this` is returned.
 
 ---
 ## .last()
 
-Get the last element from a list of elements.
-
-```js
-.last();
-```
-
-
-### Parameters
-
-This method doesn't accept any parameters
-
-
-### Return
-
-The last html node or false if there is none.
-
-
-
-### Examples
-
-Retrieve the last element of a list:
-
-```js
-var next = u("ul.demo li").last();
-```
-
-
-
-### Related
-
-[.first()](#first) retrieve the first matched element
-
+Returns a new Umbrella object containing the last node.
+If the node list is empty, `this` is returned.
 
 ---
 ## .parent()
