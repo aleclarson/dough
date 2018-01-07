@@ -3,6 +3,7 @@ const noop = require('noop')
 
 const htmlRE = /^\s*</
 const emptyInst = Object.create(Umbrella.prototype)
+const {reduce} = Array.prototype
 
 function Umbrella(nodes) {
   this.nodes = Object.freeze(nodes)
@@ -105,6 +106,8 @@ u._fragment = fragment
 u._select = select
 u._slice = (vals, filter) =>
   vals && isArrayish(vals) ? slice(vals, filter) : []
+u._split = (str) => str.trim().split(/ +/)
+u._splitArgs = (args) => reduce.call(args, splitArgs, [])
 
 //
 // Helpers
@@ -138,6 +141,10 @@ function slice(vals, filter = noop.true) {
     return arr
   }
   return []
+}
+
+function splitArgs(res, arg) {
+  return res.concat(u._split(arg))
 }
 
 function select(selector, context) {

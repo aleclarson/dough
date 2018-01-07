@@ -3,7 +3,7 @@ const u = require('./core')
 const impl = u.prototype
 
 impl.on = function(arg, listener, captures) {
-  return this._eacharg(arg, (node, eventId) =>
+  return this._eachArg(arg, (node, eventId) =>
     addListener(node, eventId, listener, captures))
 }
 
@@ -22,14 +22,14 @@ impl.off = function(arg, listener) {
   if (listener && listener._once) {
     listener = listener._once
   }
-  return this._eacharg(arg, (node, eventId) =>
+  return this._eachArg(arg, (node, eventId) =>
     removeListener(node, eventId, listener))
 }
 
 impl.trigger = function(arg, props) {
   const {nodes} = this
   if (nodes.length) {
-    this._args(arg).forEach(eventId => {
+    u._split(arg).forEach(eventId => {
       if (typeof eventId == 'string') {
         const event = createEvent(eventId, props)
         for (let i = 0; i < nodes.length; i++) {

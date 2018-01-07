@@ -11,25 +11,10 @@ const nodeMatches = Function.call.bind(
   Element.prototype.webkitMatchesSelector
 );
 
-impl._args = function(args) {
-  if (Array.isArray(args)) {
-    return args
-  }
-  if (typeof args == 'string') {
-    return splitString(args)
-  }
-  return u._slice(args).map(splitString)
-}
-
-// Split by whitespace
-function splitString(str) {
-  return str.trim().split(/ +/)
-}
-
-impl._eacharg = function(args, iterator) {
+impl._eachArg = function(args, iterator) {
   const {nodes} = this
   if (nodes.length) {
-    this._args(args).forEach(arg => {
+    u._splitArgs(args).forEach(arg => {
       for (let i = 0; i < nodes.length; i++) {
         iterator.call(this, nodes[i], arg)
       }
