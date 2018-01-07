@@ -1,4 +1,6 @@
 
+const noop = require('noop')
+
 const htmlRE = /^\s*</
 const emptyInst = Object.create(Umbrella.prototype)
 
@@ -42,7 +44,7 @@ function u(val, context) {
   }
   else if (isArrayish(val)) {
     if (val.length) {
-      nodes = slice(val)
+      nodes = slice(val, isNode)
     } else {
       return emptyInst
     }
@@ -101,8 +103,8 @@ Object.defineProperty(u.prototype, 'length', {
 // [INTERNAL USE ONLY]
 u._fragment = fragment
 u._select = select
-u._slice = (vals) =>
-  vals && isArrayish(vals) ? slice(vals) : []
+u._slice = (vals, filter) =>
+  vals && isArrayish(vals) ? slice(vals, filter) : []
 
 //
 // Helpers
@@ -126,12 +128,12 @@ function isArrayish(val) {
 }
 
 // Convert an array-like object into a new array. https://goo.gl/Rc1Q2i
-function slice(vals) {
+function slice(vals, filter = noop.true) {
   const len = vals.length
   if (len) {
     const arr = new Array(len)
     for (let val, i = 0; i < len; i++) {
-      isNode(val = vals[i]) && (arr[i] = val)
+      filter(val = vals[i]) && (arr[i] = val)
     }
     return arr
   }
