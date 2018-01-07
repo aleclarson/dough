@@ -102,7 +102,7 @@ impl.last = function(selector) {
 
 
 Object.defineProperty(impl, 'lastChild', {
-  get() { return this.nodes[0].lastChild }
+  get() { return last(this.nodes).lastChild }
 });
 
 
