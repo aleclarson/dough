@@ -48,9 +48,19 @@ impl.find = function(selector) {
 };
 
 
-impl.first = function () {
-  const node = this.nodes[0]
-  return node ? new Umbrella([node]) : this
+impl.first = function(selector) {
+  let node
+  if (arguments.length) {
+    const {nodes} = this
+    for (let i = 0; i < nodes.length; i++) {
+      node = nodes[i].querySelector(selector)
+      if (node) return new Umbrella([node])
+    }
+    return u()
+  } else {
+    node = this.nodes[0]
+    return node ? new Umbrella([node]) : this
+  }
 };
 
 
