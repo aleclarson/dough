@@ -9,5 +9,8 @@
     "noop": "aleclarson/noop#0.0.1",
     "popmotion": "^8.1.6",
     "stylefire": "^1.1.8"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1"
   }
 }
