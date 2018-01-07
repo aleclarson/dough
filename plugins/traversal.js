@@ -85,9 +85,19 @@ impl.index = function(arg) {
 }
 
 
-impl.last = function() {
-  const node = this.lastNode
-  return node ? new Umbrella([node]) : this
+impl.last = function(selector) {
+  let node
+  if (arguments.length) {
+    const {nodes} = this
+    for (let i = nodes.length; i > 0; i) {
+      node = last(nodes[--i].querySelectorAll(selector))
+      if (node) return new Umbrella([node])
+    }
+    return u()
+  } else {
+    node = last(this.nodes)
+    return node ? new Umbrella([node]) : this
+  }
 };
 
 
@@ -97,9 +107,12 @@ Object.defineProperty(impl, 'lastChild', {
 
 
 Object.defineProperty(impl, 'lastNode', {
-  get() { return this.nodes[this.nodes.length - 1] }
+  get() { return last(this.nodes) }
 });
 
+function last(arr) {
+  return arr[arr.length - 1]
+}
 
 impl.parent = function(selector) {
   if (this.length == 1) {
