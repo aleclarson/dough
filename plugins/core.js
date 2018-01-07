@@ -3,7 +3,7 @@ const htmlRE = /^\s*</
 const emptyInst = Object.create(Umbrella.prototype)
 
 function Umbrella(nodes) {
-  this.nodes = nodes
+  this.nodes = Object.freeze(nodes)
 }
 
 function u(val, context) {
@@ -91,7 +91,8 @@ u.prototype = Umbrella.prototype
 
 // This made the code faster, read "Initializing instance variables" in
 // https://developers.google.com/speed/articles/optimizing-javascript
-u.prototype.nodes = []
+// Also, freeze the array to prevent mutations.
+u.prototype.nodes = Object.freeze([])
 
 Object.defineProperty(u.prototype, 'length', {
   get() { return this.nodes.length }
