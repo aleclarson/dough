@@ -37,11 +37,14 @@ impl.eq = function(index) {
 };
 
 
-// Find all the nodes children of the current ones matched by a selector
-impl.find = function (selector) {
-  return this.map(function (node) {
-    return u(selector || '*', node);
-  });
+impl.find = function(selector) {
+  if (typeof selector != 'string') {
+    const matches = this._matcher(selector)
+    return this.map(node =>
+      node.querySelectorAll('*').filter(matches))
+  }
+  return this.map(node =>
+    node.querySelectorAll(selector))
 };
 
 
