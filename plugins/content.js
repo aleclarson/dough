@@ -1,3 +1,4 @@
+// TODO: Postpone mounting if `timeSinceLastFrame` is too long.
 
 const u = require('./core');
 const impl = u.prototype;
@@ -105,13 +106,36 @@ impl.wrap = function(arg) {
 //
 
 function insertBefore(node) {
-  removeNode(node)
-  this.parentNode.insertBefore(node, this)
+  const sibling = this
+  if (this._mounting) {
+    node._mounting = requestAnimationFrame(mount)
+  } else {
+    if (!u.isElem(this.parentNode)) {
+      throw Error('Cannot insert before a detached node')
+    }
+    if (document.contains(this.parentNode)) {
+      node._mounting = requestAnimationFrame(mount)
+    } else {
+      mount()
+    }
+  }
+  function mount() {
+    removeNode(node)
+    sibling.parentNode.insertBefore(node, sibling)
+  }
 }
 
 function appendChild(node) {
-  removeNode(node)
-  this.appendChild(node)
+  const parent = this
+  if (document.contains(parent)) {
+    node._mounting = requestAnimationFrame(mount)
+  } else {
+    mount()
+  }
+  function mount() {
+    removeNode(node)
+    parent.appendChild(node)
+  }
 }
 
 function wrapNode(wrapper) {
@@ -121,6 +145,10 @@ function wrapNode(wrapper) {
 }
 
 function removeNode(node) {
+  if (node._mounting) {
+    cancelAnimationFrame(node._mounting)
+    node._mounting = undefined
+  }
   if (node.parentNode) {
     node.parentNode.removeChild(node)
   }
