@@ -28,15 +28,16 @@ u.prototype.tween = function(arg) {
   return _animate(nodes, arg)
 }
 
-u.prototype.stop = function(attr) {
+u.prototype.stop = function(prop) {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i]
     if (node._anims) {
-      const anim = node._anims[attr]
+      const anim = node._anims[prop]
       if (anim) anim.stop()
     }
   }
+  return this
 }
 
 //
