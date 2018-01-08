@@ -1,6 +1,7 @@
 
+import css from 'stylefire/css'
+
 const u = require('./core')
-const css = require('stylefire/css')
 const isObject = require('is-object')
 
 const impl = u.prototype

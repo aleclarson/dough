@@ -2,14 +2,15 @@
 
 const u = require('./core')
 
+import chain from 'popmotion/compositors/chain'
+import delay from 'popmotion/compositors/delay'
+import tween from 'popmotion/animations/tween'
+import css from 'stylefire/css'
+
 const {onFrameStart} = require('framesync')
 const isObject = require('is-object')
 const easing = require('popmotion/easing')
-const chain = require('popmotion/compositors/chain')
-const delay = require('popmotion/compositors/delay')
-const tween = require('popmotion/animations/tween')
 const noop = require('noop')
-const css = require('stylefire/css')
 
 const emptyObject = {}
 
