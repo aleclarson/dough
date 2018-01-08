@@ -76,18 +76,19 @@ impl.findLast = function(selector) {
 
 impl.first = function(selector) {
   const {nodes} = this
-  let node
   if (arguments.length) {
+    const matches = this._matcher(selector)
     for (let i = 0; i < nodes.length; i++) {
-      node = nodes[i].querySelector(selector)
-      if (node) return new Umbrella([node])
+      const node = nodes[i]
+      if (matches(node, i)) {
+        return new Umbrella([node])
+      }
     }
     return u()
-  } else if (nodes.length > 1) {
-    node = nodes[0]
-    if (node) return new Umbrella([node])
   }
-  return this
+  return nodes.length > 1
+    ? new Umbrella([nodes[0]])
+    : this
 };
 
 Object.defineProperty(impl, 'firstChild', {
@@ -112,18 +113,19 @@ Object.defineProperty(impl, 'index', {
 
 impl.last = function(selector) {
   const {nodes} = this
-  let node
   if (arguments.length) {
+    const matches = this._matcher(selector)
     for (let i = nodes.length; i > 0; i) {
-      node = last(nodes[--i].querySelectorAll(selector))
-      if (node) return new Umbrella([node])
+      const node = nodes[--i]
+      if (matches(node, i)) {
+        return new Umbrella([node])
+      }
     }
     return u()
-  } else if (nodes.length > 1) {
-    node = last(nodes)
-    if (node) return new Umbrella([node])
   }
-  return this
+  return nodes.length > 1
+    ? new Umbrella([nodes[nodes.length - 1]])
+    : this
 };
 
 Object.defineProperty(impl, 'lastChild', {
