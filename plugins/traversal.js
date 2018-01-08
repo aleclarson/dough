@@ -110,6 +110,7 @@ function last(arr) {
 impl.parent = function(selector) {
   if (this.length == 1) {
     const parent = this.parentNode
+    if (!u.isElem(parent)) return u()
     return u(selector && !this._matches(selector, parent) ? null : parent)
   } else {
     const parents = this.map(getParent)
@@ -118,7 +119,10 @@ impl.parent = function(selector) {
 };
 
 function getParent(node) {
-  return node.parentNode
+  // Avoid document fragments.
+  if (u.isElem(node.parentNode)) {
+    return node.parentNode
+  }
 }
 
 Object.defineProperty(impl, 'parentNode', {
