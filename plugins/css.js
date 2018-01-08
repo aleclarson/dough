@@ -45,18 +45,24 @@ impl.render = function() {
 //
 
 function getStyleProp(node, prop) {
-  if (!node._style) node._style = css(node)
-  return node._style.get(prop)
+  // Avoid text nodes.
+  if (u.isElem(node)) {
+    if (!node._style) node._style = css(node)
+    return node._style.get(prop)
+  }
 }
 
 function setStyleProp(nodes, prop, value) {
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i]
-    if (node._anims) {
-      const anim = node._anims[prop]
-      if (anim) anim.stop()
+    // Avoid text nodes.
+    if (u.isElem(node)) {
+      if (node._anims) {
+        const anim = node._anims[prop]
+        if (anim) anim.stop()
+      }
+      if (!node._style) node._style = css(node)
+      node._style.set(prop, value)
     }
-    if (!node._style) node._style = css(node)
-    node._style.set(prop, value)
   }
 }
