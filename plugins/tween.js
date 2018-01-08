@@ -7,7 +7,6 @@ import delay from 'popmotion/compositors/delay'
 import tween from 'popmotion/animations/tween'
 import css from 'stylefire/css'
 
-const {onFrameStart} = require('framesync')
 const isObject = require('is-object')
 const easing = require('popmotion/easing')
 const noop = require('noop')
@@ -15,8 +14,8 @@ const noop = require('noop')
 const emptyObject = {}
 
 u.prototype.tween = function(arg) {
+  const {nodes} = this
   if (typeof arg == 'string') {
-    const {nodes} = this
     if (nodes.length == 0) {
       return null
     }
@@ -26,7 +25,7 @@ u.prototype.tween = function(arg) {
   if (!isObject(arg)) {
     throw TypeError('Expected an object or string')
   }
-  return _animate.call(this, arg)
+  return _animate(nodes, arg)
 }
 
 u.prototype.stop = function(attr) {
@@ -61,60 +60,46 @@ function _configure(config) {
   return config
 }
 
-function _animate(arg) {
-  const {nodes} = this
-
-  let promise
-  if (nodes.length == 0) {
-    promise = Promise.resolve()
-    return {
-      stop: noop,
-      then: promise.then.bind(promise),
+function _animate(nodes, arg) {
+  let stop = noop
+  const promise = new Promise((resolve, reject) => {
+    if (nodes.length == 0) {
+      return resolve()
     }
-  }
-
-  let stopped = false
-  let stop = function() {
-    stopped = true
-  }
-
-  promise = new Promise((resolve, reject) => {
     let count = 0
     const anims = []
-
     const config = _configure(arg)
-    onFrameStart(() => {
-      if (stopped) return
-      for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i]
-        if (!node._anims) node._anims = {}
-        if (!node._style) node._style = css(node)
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i]
+      if (!node._anims) node._anims = {}
+      if (!node._style) node._style = css(node)
 
-        for (let attr in config.to) {
-          anims.push(animate(node, attr))
-          count += 1
-        }
-
-        if (i == 0 && count == 1 && nodes.length == 1) {
-          stop = anims[0].stop
-          return
-        }
+      // Create one tween for every property.
+      for (let prop in config.to) {
+        anims.push(animate(node, prop))
+        count += 1
       }
+      if (count == 0) {
+        return resolve()
+      }
+    }
+    if (count == 1) {
+      stop = anims[0].stop
+    } else {
       stop = function() {
         anims.forEach(anim => anim._stop())
         const err = new Error('All animations were stopped')
         err.anims = anims
         reject(err)
       }
-    })
-
-    function animate(node, attr) {
-      let anim = node._anims[attr]
+    }
+    function animate(node, prop) {
+      let anim = node._anims[prop]
       if (anim) anim.stop()
 
       anim = tween({
-        to: config.to[attr],
-        from: config.from[attr] || node._style.get(attr),
+        to: config.to[prop],
+        from: config.from[prop] || node._style.get(prop),
         ease: config.ease,
         duration: config.duration,
       })
@@ -124,20 +109,20 @@ function _animate(arg) {
       }
 
       const style = node._style
-      node._anims[attr] = anim = anim.start({
-        update: (val) => style.set(attr, val),
+      node._anims[prop] = anim = anim.start({
+        update: (val) => style.set(prop, val),
         complete() {
-          delete anims[attr]
+          delete anims[prop]
           if (--count == 0) resolve()
         }
       })
 
       anim.node = node
-      anim.attr = attr
+      anim.prop = prop
 
       anim._stop = anim.stop
       anim.stop = function() {
-        delete node._anims[attr]
+        delete node._anims[prop]
         this._stop()
         if (config.all) {
           const err = new Error('An animation was stopped')
@@ -154,7 +139,7 @@ function _animate(arg) {
   })
 
   return {
-    stop: () => stop(),
+    stop,
     then: promise.then.bind(promise),
   }
 }
