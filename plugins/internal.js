@@ -11,7 +11,7 @@ const nodeMatches = Function.call.bind(
   Element.prototype.webkitMatchesSelector
 );
 
-impl._eachArg = function(args, iterator) {
+impl._apply = function(args, iterator) {
   const {nodes} = this
   if (nodes.length) {
     u._splitArgs(args).forEach(arg => {

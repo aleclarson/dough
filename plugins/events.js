@@ -3,7 +3,7 @@ const u = require('./core')
 const impl = u.prototype
 
 impl.on = function(arg, listener, captures) {
-  return this._eachArg(arg, (node, eventId) =>
+  return this._apply(arg, (node, eventId) =>
     addListener(node, eventId, listener, captures))
 }
 
@@ -22,7 +22,7 @@ impl.off = function(arg, listener) {
   if (listener && listener._once) {
     listener = listener._once
   }
-  return this._eachArg(arg, (node, eventId) =>
+  return this._apply(arg, (node, eventId) =>
     removeListener(node, eventId, listener))
 }
 
