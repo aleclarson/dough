@@ -65,6 +65,15 @@ impl.findAll = function(selector) {
     node.querySelectorAll(selector))
 };
 
+impl.findLast = function(selector) {
+  const {nodes} = this
+  for (let i = nodes.length; i > 0; i) {
+    const node = last(nodes[--i].querySelectorAll(selector))
+    if (node) return new Umbrella([node])
+  }
+  return u()
+};
+
 impl.first = function(selector) {
   const {nodes} = this
   let node
