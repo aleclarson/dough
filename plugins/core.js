@@ -25,7 +25,7 @@ function u(val, context) {
     } else {
       nodes = select(val, context)
       if (!nodes) return emptyInst
-      if (isNode(nodes)) {
+      if (validNode(nodes)) {
         nodes = [nodes]
       } else if (nodes.length) {
         nodes = slice(nodes)
@@ -38,14 +38,14 @@ function u(val, context) {
     nodes = [val]
   }
   else if (Array.isArray(val)) {
-    nodes = val.filter(isNode)
+    nodes = val.filter(validNode)
     if (nodes.length == 0) {
       return emptyInst
     }
   }
   else if (isArrayish(val)) {
     if (val.length) {
-      nodes = slice(val, isNode)
+      nodes = slice(val, validNode)
     } else {
       return emptyInst
     }
@@ -124,8 +124,8 @@ function notEmpty(node) {
     node.textContent.trim().length != 0
 }
 
-function isNode(val) {
-  return !!val.nodeType && notEmpty(val)
+function validNode(val) {
+  return val && !!val.nodeType && notEmpty(val)
 }
 
 function isArrayish(val) {
