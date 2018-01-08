@@ -11,7 +11,7 @@ function addClass(node, name) {
 }
 
 impl.hasClass = function() {
-  return this.is([''].concat(u._splitArgs(arguments)).join('.'))
+  return this.is([''].concat(u._splitReduce(arguments)).join('.'))
 }
 
 impl.is = function(selector) {
