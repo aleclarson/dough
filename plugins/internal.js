@@ -11,14 +11,17 @@ const nodeMatches = Function.call.bind(
   Element.prototype.webkitMatchesSelector
 );
 
-impl._apply = function(args, iterator) {
+// For every item in the given array, call the
+// iterator once per matched node.
+impl._apply = function(values, iterator) {
   const {nodes} = this
   if (nodes.length) {
-    u._splitArgs(args).forEach(arg => {
-      for (let i = 0; i < nodes.length; i++) {
-        iterator.call(this, nodes[i], arg)
+    for (let i = 0; i < values.length; i++) {
+      const value = values[i]
+      for (let j = 0; j < nodes.length; j++) {
+        iterator.call(this, nodes[j], value)
       }
-    })
+    }
   }
   return this
 }
