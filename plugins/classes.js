@@ -3,7 +3,7 @@ const u = require('./core')
 const impl = u.prototype
 
 impl.addClass = function() {
-  return this._apply(arguments, addClass)
+  return this._apply(u._splitReduce(arguments), addClass)
 }
 
 function addClass(node, name) {
@@ -39,7 +39,7 @@ impl.not = function(selector) {
 }
 
 impl.removeClass = function() {
-  return this._apply(arguments, removeClass)
+  return this._apply(u._splitReduce(arguments), removeClass)
 }
 
 function removeClass(node, name) {
@@ -50,7 +50,7 @@ impl.toggleClass = function(arg, flag) {
   if (flag === !!flag) {
     return this[flag ? 'addClass' : 'removeClass'](arg)
   }
-  return this._apply(arg, toggleClass)
+  return this._apply(u._splitReduce(arg), toggleClass)
 }
 
 function toggleClass(node, name) {
