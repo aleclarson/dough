@@ -30,12 +30,14 @@ impl.closest = function(selector, context) {
 
 impl.contains = function(arg) {
   if (arg) {
-    const {nodes} = this
     const matches = typeof arg == 'string'
-      ? (node) => node.querySelector(arg) !== null
-      : (node) => node.contains(arg) && node !== arg
+      ? (node) => node.querySelector(arg)
+      : (node) => node.contains(arg) && node != arg
+
+    const {nodes} = this
     for (let i = 0; i < nodes.length; i++) {
-      if (matches(nodes[i])) return true
+      const node = nodes[i]
+      if (u.isElem(node) && matches(node)) return true
     }
   }
   return false
@@ -49,8 +51,11 @@ impl.eq = function(index) {
 impl.find = function(selector) {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i].querySelector(selector)
-    if (node) return new Umbrella([node])
+    let node = nodes[i]
+    if (u.isElem(node)) {
+      node = node.querySelector(selector)
+      if (node) return new Umbrella([node])
+    }
   }
   return u()
 };
@@ -59,17 +64,20 @@ impl.findAll = function(selector) {
   if (typeof selector != 'string') {
     const matches = this._matcher(selector)
     return this.map(node =>
-      node.querySelectorAll('*').filter(matches))
+      u.isElem(node) && node.querySelectorAll('*').filter(matches))
   }
   return this.map(node =>
-    node.querySelectorAll(selector))
+    u.isElem(node) && node.querySelectorAll(selector))
 };
 
 impl.findLast = function(selector) {
   const {nodes} = this
   for (let i = nodes.length; i > 0; i) {
-    const node = last(nodes[--i].querySelectorAll(selector))
-    if (node) return new Umbrella([node])
+    let node = nodes[--i]
+    if (u.isElem(node)) {
+      node = last(node.querySelectorAll(selector))
+      if (node) return new Umbrella([node])
+    }
   }
   return u()
 };
