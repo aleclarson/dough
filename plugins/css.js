@@ -53,6 +53,7 @@ function getStyleProp(node, prop) {
 }
 
 function setStyleProp(nodes, prop, value) {
+  if (typeof value == 'undefined') return
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i]
     // Avoid text nodes.
