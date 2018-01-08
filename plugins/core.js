@@ -21,7 +21,7 @@ function u(val, context) {
   let nodes
   if (typeof val == 'string') {
     if (htmlRE.test(val)) {
-      nodes = slice(fragment(val).childNodes)
+      nodes = slice(fragment(val).childNodes, notEmpty)
     } else {
       nodes = select(val, context)
       if (!nodes) return emptyInst
@@ -119,12 +119,13 @@ function fragment(html) {
   return range.createContextualFragment(html || '')
 }
 
+function notEmpty(node) {
+  return node.nodeType != 3 ||
+    node.textContent.trim().length != 0
+}
+
 function isNode(val) {
-  // Ignore empty text nodes.
-  if (val.nodeType == 3) {
-    return !!val.textContent.trim().length
-  }
-  return !!val.nodeType
+  return !!val.nodeType && notEmpty(val)
 }
 
 function isArrayish(val) {
