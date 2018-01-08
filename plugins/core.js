@@ -120,6 +120,10 @@ function fragment(html) {
 }
 
 function isNode(val) {
+  // Ignore empty text nodes.
+  if (val.nodeType == 3) {
+    return !!val.textContent.trim().length
+  }
   return !!val.nodeType
 }
 
