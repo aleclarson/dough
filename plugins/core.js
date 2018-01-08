@@ -106,7 +106,7 @@ u._fragment = fragment
 u._select = select
 u._slice = (vals, filter) =>
   vals && isArrayish(vals) ? slice(vals, filter) : []
-u._split = (str) => str.trim().split(/ +/)
+u._split = (str) => str.trim().split(' ')
 u._splitArgs = (args) => reduce.call(args, splitArgs, [])
 
 //
