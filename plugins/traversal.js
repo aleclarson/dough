@@ -66,15 +66,17 @@ Object.defineProperty(impl, 'firstNode', {
   get() { return this.nodes[0] }
 });
 
-const indexOf = Function.call.bind(Array.prototype.indexOf)
-impl.index = function(arg) {
-  if (arguments.length == 0) {
-    const node = this.nodes[0]
-    return indexOf(node.parentNode.children, node)
-  } else {
-    return indexOf(this.nodes, u(arg).firstNode)
-  }
+impl.indexOf = function(arg) {
+  return this.nodes.indexOf(u(arg).firstNode)
 }
+
+const indexOf = Function.call.bind(Array.prototype.indexOf)
+Object.defineProperty(impl, 'index', {
+  get() {
+    const node = this.nodes[0]
+    return indexOf(node.parentNode.childNodes, node)
+  }
+})
 
 impl.last = function(selector) {
   const {nodes} = this
