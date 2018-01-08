@@ -27,18 +27,8 @@ impl.off = function(arg, listener) {
 }
 
 impl.trigger = function(arg, props) {
-  const {nodes} = this
-  if (nodes.length) {
-    u._split(arg).forEach(eventId => {
-      if (typeof eventId == 'string') {
-        const event = createEvent(eventId, props)
-        for (let i = 0; i < nodes.length; i++) {
-          nodes[i].dispatchEvent(event)
-        }
-      }
-    })
-  }
-  return this
+  return this._apply(u._split(arg), (node, eventId) =>
+    node.dispatchEvent(createEvent(eventId, props)))
 }
 
 //
