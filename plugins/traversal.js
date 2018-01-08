@@ -17,10 +17,11 @@ Object.defineProperty(impl, 'childNodes', {
   get() { return this.nodes[0].childNodes }
 });
 
-impl.closest = function(selector) {
+impl.closest = function(selector, context) {
   const matches = this._matcher(selector)
   return this.map((node, i) => {
-    while (node && node != document) {
+    const owner = context || node.ownerDocument
+    while (node && node != owner) {
       if (matches(node, i)) return node
       node = node.parentNode
     }
