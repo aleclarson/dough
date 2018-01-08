@@ -28,6 +28,19 @@ impl.closest = function(selector, context) {
   })
 }
 
+impl.contains = function(arg) {
+  if (arg) {
+    const {nodes} = this
+    const matches = typeof arg == 'string'
+      ? (node) => node.querySelector(arg) !== null
+      : (node) => node.contains(arg) && node !== arg
+    for (let i = 0; i < nodes.length; i++) {
+      if (matches(nodes[i])) return true
+    }
+  }
+  return false
+}
+
 impl.eq = function(index) {
   const node = this.nodes[index < 0 ? this.length + index : index]
   return node ? new Umbrella([node]) : u()
