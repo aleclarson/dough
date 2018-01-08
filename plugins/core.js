@@ -137,15 +137,12 @@ function isArrayish(val) {
 
 // Convert an array-like object into a new array. https://goo.gl/Rc1Q2i
 function slice(vals, filter = noop.true) {
-  const len = vals.length
-  if (len) {
-    const arr = new Array(len)
-    for (let val, i = 0; i < len; i++) {
-      filter(val = vals[i]) && (arr[i] = val)
-    }
-    return arr
+  const arr = []
+  for (let i = 0; i < vals.length; i++) {
+    const val = vals[i]
+    if (filter(val)) arr.push(val)
   }
-  return []
+  return arr
 }
 
 function splitReducer(res, arg) {
