@@ -46,7 +46,7 @@ impl.eq = function(index) {
   return node ? new Umbrella([node]) : u()
 };
 
-impl.find = function(selector) {
+impl.findAll = function(selector) {
   if (typeof selector != 'string') {
     const matches = this._matcher(selector)
     return this.map(node =>
