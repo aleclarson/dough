@@ -82,6 +82,13 @@ u.text = function() {
   return new Umbrella(nodes)
 }
 
+const capsRE = /([A-Z])/g
+const kebabify = (ch) => '-' + ch.toLowerCase()
+
+u.kebab = function(str) {
+  return str.replace(capsRE, kebabify)
+}
+
 u.addSelector = function(regex, select) {
   selectors.push({
     test: regex.test.bind(regex),
