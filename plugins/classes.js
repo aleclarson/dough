@@ -11,7 +11,13 @@ function addClass(node, name) {
 }
 
 impl.hasClass = function() {
-  return this.is([''].concat(u._splitReduce(arguments)).join('.'))
+  const node = this.nodes[0]
+  if (!node) return false
+  const names = u._splitReduce(arguments)
+  for (let i = 0; i < names.length; i++) {
+    if (!node.classList.contains(names[i])) return false
+  }
+  return true
 }
 
 impl.is = function(selector) {
