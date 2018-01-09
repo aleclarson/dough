@@ -47,8 +47,12 @@ impl.render = function() {
 function getStyleProp(node, prop) {
   // Avoid text nodes.
   if (u.isElem(node)) {
-    if (!node._style) node._style = css(node)
-    return node._style.get(u.kebab(prop))
+    prop = u.kebab(prop)
+    if (document.contains(node)) {
+      if (!node._style) node._style = css(node)
+      return node._style.get(prop)
+    }
+    return node.style[prop]
   }
 }
 
