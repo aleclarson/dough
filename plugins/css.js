@@ -69,6 +69,9 @@ function setStyleProp(nodes, prop, value) {
       }
       if (!node._style) node._style = css(node)
       node._style.set(prop, value)
+      if (!document.contains(node)) {
+        node._style.render(true)
+      }
     }
   }
 }
