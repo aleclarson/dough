@@ -77,7 +77,7 @@ function _animate(nodes, arg) {
 
       // Create one tween for every property.
       for (let prop in config.to) {
-        anims.push(animate(node, prop))
+        anims.push(animate(node, u.kebab(prop)))
         count += 1
       }
       if (count == 0) {

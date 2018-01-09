@@ -48,12 +48,13 @@ function getStyleProp(node, prop) {
   // Avoid text nodes.
   if (u.isElem(node)) {
     if (!node._style) node._style = css(node)
-    return node._style.get(prop)
+    return node._style.get(u.kebab(prop))
   }
 }
 
 function setStyleProp(nodes, prop, value) {
   if (typeof value == 'undefined') return
+  prop = u.kebab(prop)
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i]
     // Avoid text nodes.
