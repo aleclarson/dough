@@ -28,6 +28,13 @@ impl.prop = function(name, value) {
   }
 };
 
+impl.cache = function() {
+  if (arguments.length == 0) {
+    return cacheFns.get(this.nodes[0])
+  }
+  return this._pairs(arguments, cacheFns)
+};
+
 //
 // Helpers
 //
@@ -49,5 +56,20 @@ const dataFns = {
   },
   set(nodes, name, value) {
     attrFns.set(nodes, 'data-' + name, value)
+  }
+}
+
+const CACHE_KEY = Symbol()
+const cacheFns = {
+  get(node, key) {
+    let cache = node[CACHE_KEY]
+    if (!cache) node[CACHE_KEY] = cache = Object.create(null)
+    return key ? cache[key] : cache
+  },
+  set(nodes, key, value) {
+    for (let i = 0; i < nodes.length; i++) {
+      const cache = cacheFns.get(nodes[i])
+      cache[key] = value
+    }
   }
 }
