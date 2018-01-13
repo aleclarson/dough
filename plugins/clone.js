@@ -15,7 +15,7 @@ impl.clone = function(attrs) {
 
 function clone(node, attrs) {
   const clone = node.cloneNode(true)
-  if (attrs) u._setAttrs(clone, attrs)
+  if (attrs) u._initAttributes(clone, attrs)
   mirror(node, clone)
 
   // Mirror every descendant node.

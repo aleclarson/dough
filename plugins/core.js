@@ -115,8 +115,8 @@ Object.defineProperty(u.prototype, 'length', {
 })
 
 // [INTERNAL USE ONLY]
+u._initAttributes = initAttributes
 u._parseHTML = parseHTML
-u._setAttrs = setAttrs
 u._select = select
 u._slice = (vals, filter) =>
   vals && isArrayish(vals) ? slice(vals, filter) : []
@@ -132,14 +132,15 @@ function parseHTML(html, attrs) {
   // Detect strings like '<div>'
   if (singleTagRE.test(html)) {
     const node = document.createElement(html.slice(1, -1))
-    if (isObject(attrs)) setAttrs(node, attrs)
+    if (isObject(attrs)) initAttributes(node, attrs)
     return [node]
   }
   // This is at least 2x slower than `setAttrs`
   return slice(htmlRange.createContextualFragment(html).childNodes, notEmpty)
 }
 
-function setAttrs(node, attrs) {
+// This is only called during node creation.
+function initAttributes(node, attrs) {
   for (let attr in attrs) {
     let val = attrs[attr]
     switch (attr) {
