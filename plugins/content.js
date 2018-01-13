@@ -3,22 +3,25 @@
 const u = require('./core');
 const impl = u.prototype;
 
+const nextFrame = requestAnimationFrame;
+
 impl.after = function() {
-  const {nodes} = this
-  for (let i = 0; i < nodes.length; i++) {
-    const after = nodes[i].nextSibling
-    eachNode(arguments, insertBefore, after)
-  }
-  return this
+  let above, below
+  return this._mount(arguments, function(node) {
+    const parent = this.parentNode
+    if (!parent) {
+      throw Error('Cannot insert after a detached node')
+    }
+    if (above != this) {
+      above = this
+      below = this.nextSibling
+    }
+    parent.insertBefore(node, siblingAfter)
+  })
 };
 
 impl.append = function() {
-  const {nodes} = this
-  for (let i = 0; i < nodes.length; i++) {
-    const parent = nodes[i]
-    eachNode(arguments, appendChild, parent)
-  }
-  return this
+  return this._mount(arguments, appendChild)
 };
 
 impl.appendTo = function(parent, context) {
@@ -27,43 +30,38 @@ impl.appendTo = function(parent, context) {
 };
 
 impl.before = function() {
-  const {nodes} = this
-  for (let i = 0; i < nodes.length; i++) {
-    const after = nodes[i]
-    eachNode(arguments, insertBefore, after)
-  }
-  return this
+  return this._mount(arguments, insertBefore)
 };
 
 impl.empty = function() {
-  const {nodes} = this
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i]
-    while (node.firstChild) {
-      node.removeChild(node.firstChild)
+  return this.each(node => {
+    if (node._mounting || document.contains(node)) {
+      nextFrame(removeChildren.bind(null, node))
+    } else {
+      removeChildren(node)
     }
-  }
-  return this
+  })
 };
 
+// TODO: Mutations should be async.
 impl.html = function(text) {
   if (arguments.length) {
-    const {nodes} = this
-    for (let i = 0; i < nodes.length; i++) {
-      nodes[i].innerHTML = text
-    }
-    return this
+    return this.each(node => {
+      node.innerHTML = text
+    })
   }
   return this.nodes[0].innerHTML
 };
 
 impl.prepend = function() {
-  const {nodes} = this
-  for (let i = 0; i < nodes.length; i++) {
-    const after = nodes[i].firstChild
-    eachNode(arguments, insertBefore, after)
-  }
-  return this
+  let parent, below
+  return this._mount(arguments, function(node) {
+    if (parent != this) {
+      parent = this
+      below = this.firstChild
+    }
+    this.insertBefore(node, below)
+  })
 };
 
 impl.prependTo = function(parent, context) {
@@ -75,66 +73,117 @@ impl.remove = function() {
   return this.each(removeNode)
 };
 
+impl.replace = function() {
+  return this._mount(arguments, replaceNode)
+};
+
+// TODO: Mutations should be async.
 impl.text = function(text) {
   if (arguments.length) {
-    const {nodes} = this
-    for (let i = 0; i < nodes.length; i++) {
-      nodes[i].textContent = text
-    }
-    return this
+    return this.each(node => {
+      node.textContent = text
+    })
   }
   return this.nodes[0].textContent
 };
 
 impl.wrap = function(arg) {
-  const {nodes} = this
-  if (arg && nodes.length) {
-    for (let i = 0; i < nodes.length; i++) {
-      const node = nodes[i]
-      if (typeof arg == 'function') {
-        withNode(arg.call(node), wrapNode, node)
-      } else {
-        withNode(arg, wrapNode, node)
+  if (typeof arg == 'function') {
+    return this.each((node, i) => {
+      const wrapper = u(arg(node, i))
+      if (wrapper.length) {
+        unschedule(node)
+        if (document.contains(node)) {
+          nextFrame(wrapNode.bind(node, wrapper))
+        } else {
+          wrapNode.call(node, wrapper)
+        }
       }
+    })
+  }
+  return this._mount(arguments, wrapNode)
+};
+
+// Mount each value in the given array to each node in the current set.
+impl._mount = function(vals, mount) {
+  const {nodes} = this
+  if (nodes.length) {
+    const render = function(node) {
+      unschedule(node)
+      if (this._mounting || document.contains(this)) {
+        node._mounting = nextFrame(mount.bind(this, node))
+      } else {
+        mount.call(this, node)
+      }
+    }
+    if (nodes.length == 1) {
+      addToParent(nodes[0], vals, render)
+    } else {
+      addToParents(nodes, vals, render)
     }
   }
   return this
-};
+}
 
 //
 // Helpers
 //
 
-function insertBefore(node) {
-  const sibling = this
-  if (this._mounting) {
-    node._mounting = requestAnimationFrame(mount)
-  } else {
-    if (!u.isElem(this.parentNode)) {
-      throw Error('Cannot insert before a detached node')
-    }
-    if (document.contains(this.parentNode)) {
-      node._mounting = requestAnimationFrame(mount)
+// Avoid cloning for single parent.
+function addToParent(parent, vals, render) {
+  for (let i = 0, val; i < vals.length; i++) {
+    val = vals[i]
+    if (val == null) continue
+    if (val.nodeType) {
+      render.call(parent, val)
+    } else if (typeof val == 'object') {
+      u(val).nodes.forEach(render, parent)
     } else {
-      mount()
+      u._parseHTML(val).forEach(render, parent)
     }
-  }
-  function mount() {
-    removeNode(node)
-    sibling.parentNode.insertBefore(node, sibling)
   }
 }
 
-function appendChild(node) {
-  const parent = this
-  if (document.contains(parent)) {
-    node._mounting = requestAnimationFrame(mount)
-  } else {
-    mount()
+// Clone or generate a node for each parent.
+function addToParents(parents, vals, render) {
+  for (let i = 0, val; i < vals.length; i++) {
+    val = vals[i]
+    if (val == null) continue
+    if (typeof val == 'object') {
+      val = u(val)
+      parents.forEach(parent =>
+        val.clone().nodes.forEach(render, parent))
+    } else {
+      val = u._parseHTML(val)
+      parents.forEach((parent, i) =>
+        (i > 0 ? val.map(cloneNode) : val).forEach(render, parent))
+    }
   }
-  function mount() {
-    removeNode(node)
-    parent.appendChild(node)
+}
+
+function cloneNode(node) {
+  return node.cloneNode(true)
+}
+
+function appendChild(node) {
+  this.appendChild(node)
+}
+
+function insertBefore(node) {
+  const parent = this.parentNode
+  if (parent) {
+    parent.insertBefore(node, this)
+  } else {
+    throw Error('Cannot insert before a detached node')
+  }
+}
+
+function replaceNode(replacer) {
+  const parent = this.parentNode
+  if (parent) {
+    parent.replaceChild(replacer, this)
+  } else {
+    throw Error('Cannot replace a detached node')
   }
 }
 
@@ -144,30 +193,31 @@ function wrapNode(wrapper) {
   wrapper.appendChild(this)
 }
 
+function removeChildren(node) {
+  while (node.firstChild) {
+    node.removeChild(node.firstChild)
+  }
+}
+
 function removeNode(node) {
+  if (!node._unmounting) {
+    const parent = node.parentNode
+    if (parent) {
+      if (node._mounting || document.contains(node)) {
+        node._unmounting = nextFrame(() => parent.removeChild(node))
+      } else {
+        parent.removeChild(node)
+      }
+    }
+  }
+}
+
+function unschedule(node) {
   if (node._mounting) {
     cancelAnimationFrame(node._mounting)
     node._mounting = undefined
-  }
-  if (node.parentNode) {
-    node.parentNode.removeChild(node)
-  }
-}
-
-function eachNode(args, fn, ctx) {
-  for (let i = 0; i < args.length; i++) {
-    withNode(args[i], fn, ctx)
-  }
-}
-
-function withNode(arg, fn, ctx) {
-  if (arg != null) {
-    if (u.is(arg)) {
-      arg.nodes.forEach(fn, ctx)
-    } else if (arg.nodeType) {
-      fn.call(ctx, arg)
-    } else {
-      u._fragment(arg).childNodes.forEach(fn, ctx)
-    }
+  } else if (node._unmounting) {
+    cancelAnimationFrame(node._unmounting)
+    node._unmounting = undefined
   }
 }
