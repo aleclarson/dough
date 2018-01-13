@@ -10,6 +10,7 @@ function addClass(node, name) {
   node.classList.add(name)
 }
 
+// Perf comparison: https://jsperf.com/does-class-exist
 impl.hasClass = function() {
   const node = this.nodes[0]
   if (!node) return false

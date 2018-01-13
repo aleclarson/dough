@@ -15,16 +15,16 @@ impl.data = function() {
   return this._pairs(arguments, dataFns)
 };
 
-impl.prop = function(name, value) {
+impl.prop = function(prop, value) {
   const {nodes} = this
   if (arguments.length == 2) {
     for (let i = 0; i < nodes.length; i++) {
-      nodes[i][name] = value
+      nodes[i][prop] = value
     }
     return this
   }
   if (nodes.length) {
-    return nodes[0][name]
+    return nodes[0][prop]
   }
 };
 
