@@ -1,28 +1,9 @@
 
 const u = require('./core');
 const impl = u.prototype;
-const isObject = require('is-object');
 
 impl.attr = function() {
-  const {nodes} = this
-  let name = arguments[0]
-  let value = arguments[1]
-  if (typeof name == 'string') {
-    if (arguments.length == 1) {
-      if (nodes.length == 0) return
-      return nodes[0].getAttribute(name)
-    }
-    if (nodes.length && typeof value != 'undefined') {
-      setAttribute(nodes, name, value)
-    }
-  } else if (nodes.length && isObject(name)) {
-    const values = name
-    for (name in values) {
-      value = values[name]
-      setAttribute(nodes, name, value)
-    }
-  }
-  return this
+  return this._pairs(arguments, attrFns)
 };
 
 Object.defineProperty(impl, 'bounds', {
@@ -30,8 +11,8 @@ Object.defineProperty(impl, 'bounds', {
 });
 
 // Handle data-* attributes for the matched elements
-impl.data = function(name, value) {
-  return this.attr('data-' + name, value);
+impl.data = function() {
+  return this._pairs(arguments, dataFns)
 };
 
 impl.prop = function(name, value) {
@@ -51,8 +32,22 @@ impl.prop = function(name, value) {
 // Helpers
 //
 
-function setAttribute(nodes, name, value) {
-  for (let i = 0; i < nodes.length; i++) {
-    nodes[i].setAttribute(name, value)
+const attrFns = {
+  get(node, attr) {
+    return node.getAttribute(attr)
+  },
+  set(nodes, attr, value) {
+    for (let i = 0; i < nodes.length; i++) {
+      nodes[i].setAttribute(attr, value)
+    }
+  }
+}
+
+const dataFns = {
+  get(node, name) {
+    return node.getAttribute('data-' + name)
+  },
+  set(nodes, name, value) {
+    attrFns.set(nodes, 'data-' + name, value)
   }
 }

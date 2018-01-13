@@ -1,6 +1,7 @@
 
 const u = require('./core');
 const noop = require('noop');
+const isObject = require('is-object');
 
 const impl = u.prototype;
 
@@ -51,4 +52,29 @@ impl._matches = function(selector, node) {
     return selector.nodes.indexOf(node) > -1
   }
   return false
+}
+
+impl._pairs = function(args, impl) {
+  const {nodes} = this
+  let prop = args[0]
+  if (nodes.length) {
+    let value = args[1]
+    if (typeof prop == 'string') {
+      if (args.length == 1) {
+        return impl.get(nodes[0], prop)
+      }
+      impl.set(nodes, prop, value)
+    }
+    else if (isObject(prop)) {
+      const values = prop
+      for (prop in values) {
+        value = values[prop]
+        impl.set(nodes, prop, value)
+      }
+    }
+  }
+  else if (typeof prop == 'string') {
+    if (args.length == 1) return
+  }
+  return this
 }
