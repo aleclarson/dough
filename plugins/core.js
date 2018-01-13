@@ -79,6 +79,10 @@ u.isText = function(val) {
   return val && val.nodeType == 3
 }
 
+u.elem = function(tag) {
+  return document.createElement(tag)
+}
+
 u.text = function() {
   const nodes = new Array(arguments.length)
   for (let i = 0; i < arguments.length; i++) {
