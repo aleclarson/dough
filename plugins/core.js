@@ -1,9 +1,15 @@
 
+const isObject = require('is-object')
 const noop = require('noop')
 
-const htmlRE = /^\s*</
 const emptyInst = Object.create(Umbrella.prototype)
 const {reduce} = Array.prototype
+
+const htmlRE = /^\s*\</
+const singleTagRE = /^\<[a-z][^\s\>]*\>$/
+
+// Reusable document range for complex HTML parsing
+const htmlRange = document.createRange()
 
 function Umbrella(nodes) {
   this.nodes = Object.freeze(nodes)
@@ -21,7 +27,7 @@ function u(val, context) {
   let nodes
   if (typeof val == 'string') {
     if (htmlRE.test(val)) {
-      nodes = slice(fragment(val).childNodes, notEmpty)
+      nodes = parseHTML(val, context)
     } else {
       nodes = select(val, context)
       if (!nodes) return emptyInst
@@ -109,7 +115,7 @@ Object.defineProperty(u.prototype, 'length', {
 })
 
 // [INTERNAL USE ONLY]
-u._fragment = fragment
+u._parseHTML = parseHTML
 u._select = select
 u._slice = (vals, filter) =>
   vals && isArrayish(vals) ? slice(vals, filter) : []
@@ -120,10 +126,48 @@ u._splitReduce = (arr) => reduce.call(arr, splitReducer, [])
 // Helpers
 //
 
-function fragment(html) {
-  const range = document.createRange()
-  range.setStart(document.body, 0)
-  return range.createContextualFragment(html || '')
+// Perf comparison: https://jsperf.com/generate-dom-node
+function parseHTML(html, config) {
+  // Detect strings like '<div>'
+  if (singleTagRE.test(html)) {
+    const node = document.createElement(html.slice(1, -1))
+    if (isObject(config)) buildElement(node, config)
+    return [node]
+  }
+  // This is at least 2x slower than `buildElement`
+  return slice(htmlRange.createContextualFragment(html).childNodes, notEmpty)
+}
+
+function buildElement(node, config) {
+  for (let key in config) {
+    let val = config[key]
+    switch (key) {
+
+      case 'class':
+        // SVG className works differently (see https://goo.gl/8bRsGX)
+        if (node.tagName == 'SVG') {
+          node.setAttribute(key, val)
+        } else {
+          node.className = val
+        }
+        break
+
+      case 'children':
+        if (typeof val == 'function') {
+          val = val(config)
+        }
+        u(val).appendTo(node)
+        break
+
+      case 'text':
+        node.textContent = val
+        break
+
+      default:
+        node.setAttribute(key, val)
+        break
+    }
+  }
 }
 
 function notEmpty(node) {
