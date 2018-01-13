@@ -116,6 +116,7 @@ Object.defineProperty(u.prototype, 'length', {
 
 // [INTERNAL USE ONLY]
 u._parseHTML = parseHTML
+u._setAttrs = setAttrs
 u._select = select
 u._slice = (vals, filter) =>
   vals && isArrayish(vals) ? slice(vals, filter) : []
@@ -127,26 +128,26 @@ u._splitReduce = (arr) => reduce.call(arr, splitReducer, [])
 //
 
 // Perf comparison: https://jsperf.com/generate-dom-node
-function parseHTML(html, config) {
+function parseHTML(html, attrs) {
   // Detect strings like '<div>'
   if (singleTagRE.test(html)) {
     const node = document.createElement(html.slice(1, -1))
-    if (isObject(config)) buildElement(node, config)
+    if (isObject(attrs)) setAttrs(node, attrs)
     return [node]
   }
-  // This is at least 2x slower than `buildElement`
+  // This is at least 2x slower than `setAttrs`
   return slice(htmlRange.createContextualFragment(html).childNodes, notEmpty)
 }
 
-function buildElement(node, config) {
-  for (let key in config) {
-    let val = config[key]
-    switch (key) {
+function setAttrs(node, attrs) {
+  for (let attr in attrs) {
+    let val = attrs[attr]
+    switch (attr) {
 
       case 'class':
         // SVG className works differently (see https://goo.gl/8bRsGX)
         if (node.tagName == 'SVG') {
-          node.setAttribute(key, val)
+          node.setAttribute(attr, val)
         } else {
           node.className = val
         }
@@ -154,7 +155,7 @@ function buildElement(node, config) {
 
       case 'children':
         if (typeof val == 'function') {
-          val = val(config)
+          val = val(attrs)
         }
         u(val).appendTo(node)
         break
@@ -164,7 +165,7 @@ function buildElement(node, config) {
         break
 
       default:
-        node.setAttribute(key, val)
+        node.setAttribute(attr, val)
         break
     }
   }

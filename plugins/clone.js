@@ -1,11 +1,19 @@
 
+const isObject = require('is-object');
+
 const u = require('./core');
 const impl = u.prototype;
 
-impl.clone = function() {
+impl.clone = function(attrs) {
+  const hasAttrs = isObject(attrs)
   return this.map(node => {
     const clone = node.cloneNode(true)
     mirror(node, clone)
+
+    // Set attributes on the root node(s).
+    if (hasAttrs) {
+      u._setAttrs(clone, attrs)
+    }
 
     // Mirror every descendant node.
     const nodes = u._select('*', nodes)
