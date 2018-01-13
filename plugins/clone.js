@@ -3,14 +3,15 @@ const isObject = require('is-object');
 
 const u = require('./core');
 const impl = u.prototype;
+const Umbrella = impl.constructor;
 
 impl.clone = function(attrs) {
   if (attrs != null && !isObject(attrs)) {
     throw TypeError('Expected an object or undefined')
   }
-  return this.length == 1 ?
-    clone(this.firstNode, attrs) :
-    this.map(node => clone(node, attrs))
+  return this.length == 1 ? new Umbrella([
+    clone(this.firstNode, attrs)
+  ]) : this.map(node => clone(node, attrs))
 }
 
 function clone(node, attrs) {
