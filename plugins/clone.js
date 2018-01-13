@@ -5,22 +5,24 @@ const u = require('./core');
 const impl = u.prototype;
 
 impl.clone = function(attrs) {
-  const hasAttrs = isObject(attrs)
-  return this.map(node => {
-    const clone = node.cloneNode(true)
-    mirror(node, clone)
+  if (attrs != null && !isObject(attrs)) {
+    throw TypeError('Expected an object or undefined')
+  }
+  return this.length == 1 ?
+    clone(this.firstNode, attrs) :
+    this.map(node => clone(node, attrs))
+}
 
-    // Set attributes on the root node(s).
-    if (hasAttrs) {
-      u._setAttrs(clone, attrs)
-    }
+function clone(node, attrs) {
+  const clone = node.cloneNode(true)
+  if (attrs) u._setAttrs(clone, attrs)
+  mirror(node, clone)
 
-    // Mirror every descendant node.
-    const nodes = u._select('*', nodes)
-    u._select('*', clone).forEach((dest, i) => mirror(nodes[i], dest))
-    return clone
-  })
-};
+  // Mirror every descendant node.
+  const nodes = u._select('*', nodes)
+  u._select('*', clone).forEach((dest, i) => mirror(nodes[i], dest))
+  return clone
+}
 
 impl.mirror = mirror
 function mirror(src, dest) {
