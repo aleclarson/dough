@@ -32,25 +32,28 @@ function mirror(src, dest) {
   }
 }
 
-// Nodes with these tag names are not copied properly by `cloneNode`
-const inputRE = /^(SELECT|TEXTAREA)$/
-
 mirror.input = function(src, dest) {
-  if (brokenTagRE.test(src.tagName)) {
+  const tag = src.tagName
+  // Values of these nodes are not copied by `cloneNode`
+  if (tag == 'SELECT' || tag == 'TEXTAREA') {
     dest.value = src.value
   }
 }
 
 mirror.events = function(src, dest) {
-  const listeners = src._e
-  if (listeners) {
+  if (src._e) {
     dest._e = {}
-    for (let eventId in listeners) {
-      dest._e[eventId] = []
-      listeners[eventId].forEach(listener => {
+    const eventIds = Object.keys(src._e)
+    for (let i = 0; i < eventIds.length; i++) {
+      const eventId = eventIds[i]
+      const srcListeners = src._e[eventId]
+      const destListeners = []
+      for (let j = 0; j < srcListeners.length; j++) {
+        const listener = srcListeners[j]
         node.addEventListener(eventId, listener, listener._captures)
-        dest._e[eventId].push(listener)
-      })
+        destListeners.push(listener)
+      }
+      dest._e[eventId] = destListeners
     }
   }
 }
