@@ -44,8 +44,15 @@ const attrFns = {
     return node.getAttribute(attr)
   },
   set(nodes, attr, value) {
-    for (let i = 0; i < nodes.length; i++) {
-      nodes[i].setAttribute(attr, value)
+    if (value !== undefined) {
+      const removed = value === null
+      for (let i = 0; i < nodes.length; i++) {
+        if (removed) {
+          nodes[i].removeAttribute(attr)
+        } else {
+          nodes[i].setAttribute(attr, value)
+        }
+      }
     }
   }
 }
