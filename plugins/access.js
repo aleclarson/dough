@@ -41,10 +41,11 @@ impl.cache = function() {
 
 const attrFns = {
   get(node, attr) {
-    return node.getAttribute(attr)
+    return node.getAttribute(u.kebab(attr))
   },
   set(nodes, attr, value) {
     if (value !== undefined) {
+      attr = u.kebab(attr)
       const removed = value === null
       for (let i = 0; i < nodes.length; i++) {
         if (removed) {
