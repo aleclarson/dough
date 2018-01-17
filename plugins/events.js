@@ -73,10 +73,20 @@ function createEvent(eventId, props) {
     props.bubbles !== false : nativeBubbles.indexOf(eventId) > -1
 
   const event = new eventType(eventId, {bubbles, cancelable: true})
-  if (props) {
-    Object.assign(event, props)
-  }
+  if (props) addProps(event, props)
   return event
+}
+
+function addProps(event, props) {
+  const keys = Object.keys(props)
+  const config = {enumerable: true, configurable: true}
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]
+    if (key != 'bubbles') {
+      config.value = props[key]
+      Object.defineProperty(event, key, config)
+    }
+  }
 }
 
 // Native types
