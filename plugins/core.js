@@ -158,7 +158,7 @@ function initAttributes(node, attrs) {
 
       case 'children':
         if (typeof val == 'function') {
-          val = val(attrs)
+          val = val.call(node, attrs)
         }
         u(val).appendTo(node)
         break
