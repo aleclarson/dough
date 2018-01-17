@@ -89,9 +89,12 @@ u.text = function(text) {
 
 const capsRE = /([A-Z])/g
 const kebabify = (ch) => '-' + ch.toLowerCase()
+const noKebab = {
+  viewBox: 1,
+}
 
 u.kebab = function(str) {
-  return str.replace(capsRE, kebabify)
+  return noKebab[str] ? str : str.replace(capsRE, kebabify)
 }
 
 u.addSelector = function(regex, select) {
