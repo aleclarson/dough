@@ -4,13 +4,25 @@ const impl = u.prototype;
 const Umbrella = impl.constructor;
 
 impl.array = function(iterator) {
-  if (typeof iterator != 'function') {
-    return this.nodes.slice()
+  const {nodes} = this
+  let vals
+  if (arguments.length == 0) {
+    vals = new Array(nodes.length)
+    for (let i = 0; i < nodes.length; i++) {
+      vals.push(nodes[i])
+    }
+  } else {
+    vals = []
+    for (let i = 0; i < nodes.length; i++) {
+      const val = u(iterator.call(this, nodes[i], i))
+      if (val.length) {
+        for (let i = 0; i < val.nodes.length; i++) {
+          vals.push(val.nodes[i])
+        }
+      }
+    }
   }
-  return this.nodes.reduce((arr, node, i) => {
-    const res = iterator.call(this, node, i)
-    return res ? arr.concat(u(res).nodes) : arr
-  }, [])
+  return vals
 }
 
 impl.each = function(iterator) {
