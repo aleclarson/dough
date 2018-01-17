@@ -44,7 +44,7 @@ function u(val, context) {
     nodes = [val]
   }
   else if (Array.isArray(val)) {
-    nodes = val.filter(validNode)
+    nodes = onlyNodes(val)
     if (nodes.length == 0) {
       return emptyInst
     }
@@ -181,6 +181,25 @@ function notEmpty(node) {
 
 function validNode(val) {
   return val && !!val.nodeType && notEmpty(val)
+}
+
+function onlyNodes(vals) {
+  if (vals.length == 0) {
+    return vals
+  } else {
+    const res = []
+    for (let i = 0; i < vals.length; i++) {
+      const val = vals[i]
+      if (validNode(val)) {
+        res.push(val)
+      } else if (u.is(val)) {
+        for (let i = 0; i < u.nodes.length; i++) {
+          res.push(u.nodes[i])
+        }
+      }
+    }
+    return res
+  }
 }
 
 function isArrayish(val) {
