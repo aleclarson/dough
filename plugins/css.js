@@ -18,6 +18,10 @@ impl.render = function() {
   return this
 }
 
+Object.defineProperty(impl, 'style', {
+  get() { return this.nodes[0].style }
+})
+
 //
 // Helpers
 //
