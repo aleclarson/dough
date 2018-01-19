@@ -16,7 +16,7 @@ impl.after = function() {
       above = this
       below = this.nextSibling
     }
-    parent.insertBefore(node, siblingAfter)
+    parent.insertBefore(node, below)
   })
 };
 
