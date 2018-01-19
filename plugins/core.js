@@ -193,8 +193,8 @@ function onlyNodes(vals) {
       if (validNode(val)) {
         res.push(val)
       } else if (u.is(val)) {
-        for (let i = 0; i < u.nodes.length; i++) {
-          res.push(u.nodes[i])
+        for (let i = 0; i < val.nodes.length; i++) {
+          res.push(val.nodes[i])
         }
       }
     }
