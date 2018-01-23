@@ -3,11 +3,11 @@
   "version": "2.10.1",
   "license": "MIT",
   "dependencies": {
-    "framesync": "^3.1.3",
+    "framesync": "aleclarson/framesync#1.1.1",
     "is-object": "^1.0.1",
     "noop": "aleclarson/noop#0.0.1",
-    "popmotion": "^8.1.6",
-    "stylefire": "aleclarson/stylefire#1.2.0"
+    "popmotion": "aleclarson/popmotion#8.2.0",
+    "stylefire": "aleclarson/stylefire#1.3.0"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1"

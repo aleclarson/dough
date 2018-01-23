@@ -1,9 +1,9 @@
-// TODO: Postpone mounting if `timeSinceLastFrame` is too long.
+// TODO: Postpone mounting if `frame.elapsed` is too long.
+
+const frame = require('framesync');
 
 const u = require('./core');
 const impl = u.prototype;
-
-const nextFrame = requestAnimationFrame;
 
 impl.after = function() {
   let above, below
@@ -36,7 +36,7 @@ impl.before = function() {
 impl.empty = function() {
   return this.each(node => {
     if (node._mounting || document.contains(node)) {
-      nextFrame(removeChildren.bind(null, node))
+      frame.once('render', removeChildren.bind(null, node))
     } else {
       removeChildren(node)
     }
@@ -94,7 +94,7 @@ impl.wrap = function(arg) {
       if (wrapper.length) {
         unschedule(node)
         if (document.contains(node)) {
-          nextFrame(wrapNode.bind(node, wrapper))
+          frame.once('render', wrapNode.bind(node, wrapper))
         } else {
           wrapNode.call(node, wrapper)
         }
@@ -111,7 +111,7 @@ impl._mount = function(vals, mount) {
     const render = function(node) {
       unschedule(node)
       if (this._mounting || document.contains(this)) {
-        node._mounting = nextFrame(mount.bind(this, node))
+        node._mounting = frame.once('render', mount.bind(this, node))
       } else {
         mount.call(this, node)
       }
@@ -204,7 +204,7 @@ function removeNode(node) {
     const parent = node.parentNode
     if (parent) {
       if (node._mounting || document.contains(node)) {
-        node._unmounting = nextFrame(() => parent.removeChild(node))
+        node._unmounting = frame.once('render', () => parent.removeChild(node))
       } else {
         parent.removeChild(node)
       }
@@ -214,10 +214,10 @@ function removeNode(node) {
 
 function unschedule(node) {
   if (node._mounting) {
-    cancelAnimationFrame(node._mounting)
+    frame.off('render', node._mounting)
     node._mounting = undefined
   } else if (node._unmounting) {
-    cancelAnimationFrame(node._unmounting)
+    frame.off('render', node._unmounting)
     node._unmounting = undefined
   }
 }
