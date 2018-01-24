@@ -61,7 +61,7 @@ function removeListener(node, eventId, listener) {
       }
     }
   } else {
-    events.forEach(listener =>
+    listeners.forEach(listener =>
       node.removeEventListener(eventId, listener))
     delete node._e[eventId]
   }
