@@ -167,7 +167,10 @@ function getParent(node) {
 }
 
 Object.defineProperty(impl, 'parentNode', {
-  get() { return this.nodes[0].parentNode }
+  get() {
+    const node = this.nodes[0].parentNode
+    return u.isElem(node) ? node : null
+  }
 });
 
 impl.siblings = function(selector) {
