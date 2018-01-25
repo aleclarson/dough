@@ -17,6 +17,7 @@ impl.after = function() {
       below = this.nextSibling
     }
     parent.insertBefore(node, below)
+    node._mounting = null
   })
 };
 
@@ -61,6 +62,7 @@ impl.prepend = function() {
       below = this.firstChild
     }
     this.insertBefore(node, below)
+    node._mounting = null
   })
 };
 
@@ -167,12 +169,14 @@ function cloneNode(node) {
 
 function appendChild(node) {
   this.appendChild(node)
+  node._mounting = null
 }
 
 function insertBefore(node) {
   const parent = this.parentNode
   if (parent) {
     parent.insertBefore(node, this)
+    node._mounting = null
   } else {
     throw Error('Cannot insert before a detached node')
   }
@@ -182,6 +186,7 @@ function replaceNode(replacer) {
   const parent = this.parentNode
   if (parent) {
     parent.replaceChild(replacer, this)
+    replacer._mounting = null
   } else {
     throw Error('Cannot replace a detached node')
   }
@@ -191,6 +196,7 @@ function wrapNode(wrapper) {
   const parent = this.parentNode
   if (parent) parent.replaceChild(wrapper, this)
   wrapper.appendChild(this)
+  wrapper._mounting = null
 }
 
 function removeChildren(node) {
@@ -204,7 +210,10 @@ function removeNode(node) {
     const parent = node.parentNode
     if (parent) {
       if (node._mounting || document.contains(node)) {
-        node._unmounting = frame.once('render', () => parent.removeChild(node))
+        node._unmounting = frame.once('render', () => {
+          parent.removeChild(node)
+          node._unmounting = null
+        })
       } else {
         parent.removeChild(node)
       }
@@ -215,9 +224,9 @@ function removeNode(node) {
 function unschedule(node) {
   if (node._mounting) {
     frame.off('render', node._mounting)
-    node._mounting = undefined
+    node._mounting = null
   } else if (node._unmounting) {
     frame.off('render', node._unmounting)
-    node._unmounting = undefined
+    node._unmounting = null
   }
 }
