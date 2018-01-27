@@ -50,9 +50,12 @@ const styleFns = {
           if (anim) anim.stop()
         }
         if (!node._style) node._style = css(node)
-        node._style.set(prop, value)
-        if (!document.contains(node)) {
-          node._style.render(true)
+        if (document.contains(node)) {
+          node._style.set(prop, value)
+        } else {
+          // Skip framesync, but update the cache.
+          node._style.get()[prop] = value
+          node.style[prop] = value
         }
       }
     }
