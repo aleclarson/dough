@@ -1,9 +1,16 @@
 // TODO: Postpone mounting if `frame.elapsed` is too long.
 
 const frame = require('framesync');
+const ruley = require('ruley');
 
 const u = require('./core');
 const impl = u.prototype;
+
+// Asynchronous nodes are hidden until the next frame.
+const asyncRule = ruley('visibility: hidden !important;')
+
+// Nodes are inserted asynchronously when their parent exists in the DOM.
+const asyncRender = AsyncRenderer()
 
 impl.after = function() {
   let above, below
@@ -106,29 +113,35 @@ impl._mount = function(vals, render) {
   const parents = this.nodes
   if (parents.length) {
     const parent = parents.length > 1 ? null : parents[0]
+    const mount = function(node) {
+      asyncRender.unschedule(node)
+      document.contains(this) ?
+        asyncRender.schedule(node, this, render) :
+        render.call(this, node)
+    }
     for (let i = 0, val; i < vals.length; i++) {
       val = vals[i]
       if (val == null) continue
       if (parent) {
         if (val.nodeType) {
-          render.call(parent, val)
+          mount.call(parent, val)
         }
         else if (typeof val == 'object') {
-          u(val).nodes.forEach(render, parent)
+          u(val).nodes.forEach(mount, parent)
         }
         else {
-          u._parseHTML(val).forEach(render, parent)
+          u._parseHTML(val).forEach(mount, parent)
         }
       }
       else if (typeof val == 'object') {
         val = u(val)
         parents.forEach(parent =>
-          val.clone().nodes.forEach(render, parent))
+          val.clone().nodes.forEach(mount, parent))
       }
       else {
         val = u._parseHTML(val)
         parents.forEach((parent, i) =>
-          (i ? val.map(cloneNode) : val).forEach(render, parent))
+          (i ? val.map(cloneNode) : val).forEach(mount, parent))
       }
     }
   }
@@ -176,4 +189,41 @@ function removeChildren(node) {
 function removeNode(node) {
   const parent = node.parentNode
   if (parent) parent.removeChild(node)
+}
+
+// Nodes are inserted asynchronously
+// if their parent is already in the DOM.
+function AsyncRenderer() {
+  const batch = []
+  function flush() {
+    const nodes = []
+    for (let i = 0, next; i < batch.length; i++) {
+      next = batch[i]
+      next.node._id = null
+      asyncRule.apply(next.node)
+      next.render.call(next.parent, next.node)
+      nodes.push(next.node)
+    }
+    batch.length = 0
+    frame.once('render', () => {
+      for (let i = 0; i < nodes.length; i++) {
+        asyncRule.peel(nodes[i])
+      }
+    })
+  }
+  return {
+    schedule(node, parent, render) {
+      node._id = batch.length
+      batch[node._id] = {node, parent, render}
+      if (node._id == 0) {
+        setTimeout(flush)
+      }
+    },
+    unschedule(node) {
+      if (node._id != null) {
+        batch[node._id] = null
+        node._id = null
+      }
+    }
+  }
 }
