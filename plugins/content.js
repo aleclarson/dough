@@ -17,7 +17,6 @@ impl.after = function() {
       below = this.nextSibling
     }
     parent.insertBefore(node, below)
-    node._mounting = null
   })
 };
 
@@ -35,13 +34,7 @@ impl.before = function() {
 };
 
 impl.empty = function() {
-  return this.each(node => {
-    if (node._mounting || document.contains(node)) {
-      frame.once('render', removeChildren.bind(null, node))
-    } else {
-      removeChildren(node)
-    }
-  })
+  return this.each(removeChildren)
 };
 
 // TODO: Mutations should be async.
@@ -62,7 +55,6 @@ impl.prepend = function() {
       below = this.firstChild
     }
     this.insertBefore(node, below)
-    node._mounting = null
   })
 };
 
@@ -90,77 +82,57 @@ impl.text = function(text) {
 };
 
 impl.wrap = function(arg) {
-  if (typeof arg == 'function') {
-    return this.each((node, i) => {
-      const wrapper = u(arg(node, i))
-      if (wrapper.length) {
-        unschedule(node)
-        if (document.contains(node)) {
-          frame.once('render', wrapNode.bind(node, wrapper))
-        } else {
-          wrapNode.call(node, wrapper)
-        }
-      }
-    })
+  if (typeof arg != 'function') {
+    return this._mount(arguments, wrapNode)
   }
-  return this._mount(arguments, wrapNode)
-};
-
-// Mount each value in the given array to each node in the current set.
-impl._mount = function(vals, mount) {
-  const {nodes} = this
-  if (nodes.length) {
-    const render = function(node) {
+  return this.each((node, i) => {
+    const wrapper = u(arg(node, i))
+    if (wrapper.length) {
       unschedule(node)
-      if (this._mounting || document.contains(this)) {
-        node._mounting = frame.once('render', mount.bind(this, node))
+      if (document.contains(node)) {
+        frame.once('render', wrapNode.bind(node, wrapper))
       } else {
-        mount.call(this, node)
+        wrapNode.call(node, wrapper)
       }
     }
-    if (nodes.length == 1) {
-      addToParent(nodes[0], vals, render)
-    } else {
-      addToParents(nodes, vals, render)
-    }
-  }
-  return this
-}
+  })
+};
 
 //
 // Helpers
 //
 
-// Avoid cloning for single parent.
-function addToParent(parent, vals, render) {
-  for (let i = 0, val; i < vals.length; i++) {
-    val = vals[i]
-    if (val == null) continue
-    if (val.nodeType) {
-      render.call(parent, val)
-    } else if (typeof val == 'object') {
-      u(val).nodes.forEach(render, parent)
-    } else {
-      u._parseHTML(val).forEach(render, parent)
+impl._mount = function(vals, render) {
+  const parents = this.nodes
+  if (parents.length) {
+    const parent = parents.length > 1 ? null : parents[0]
+    for (let i = 0, val; i < vals.length; i++) {
+      val = vals[i]
+      if (val == null) continue
+      if (parent) {
+        if (val.nodeType) {
+          render.call(parent, val)
+        }
+        else if (typeof val == 'object') {
+          u(val).nodes.forEach(render, parent)
+        }
+        else {
+          u._parseHTML(val).forEach(render, parent)
+        }
+      }
+      else if (typeof val == 'object') {
+        val = u(val)
+        parents.forEach(parent =>
+          val.clone().nodes.forEach(render, parent))
+      }
+      else {
+        val = u._parseHTML(val)
+        parents.forEach((parent, i) =>
+          (i ? val.map(cloneNode) : val).forEach(render, parent))
+      }
     }
   }
-}
-
-// Clone or generate a node for each parent.
-function addToParents(parents, vals, render) {
-  for (let i = 0, val; i < vals.length; i++) {
-    val = vals[i]
-    if (val == null) continue
-    if (typeof val == 'object') {
-      val = u(val)
-      parents.forEach(parent =>
-        val.clone().nodes.forEach(render, parent))
-    } else {
-      val = u._parseHTML(val)
-      parents.forEach((parent, i) =>
-        (i > 0 ? val.map(cloneNode) : val).forEach(render, parent))
-    }
-  }
+  return this
 }
 
 function cloneNode(node) {
@@ -169,14 +141,12 @@ function cloneNode(node) {
 
 function appendChild(node) {
   this.appendChild(node)
-  node._mounting = null
 }
 
 function insertBefore(node) {
   const parent = this.parentNode
   if (parent) {
     parent.insertBefore(node, this)
-    node._mounting = null
   } else {
     throw Error('Cannot insert before a detached node')
   }
@@ -186,7 +156,6 @@ function replaceNode(replacer) {
   const parent = this.parentNode
   if (parent) {
     parent.replaceChild(replacer, this)
-    replacer._mounting = null
   } else {
     throw Error('Cannot replace a detached node')
   }
@@ -196,7 +165,6 @@ function wrapNode(wrapper) {
   const parent = this.parentNode
   if (parent) parent.replaceChild(wrapper, this)
   wrapper.appendChild(this)
-  wrapper._mounting = null
 }
 
 function removeChildren(node) {
@@ -206,27 +174,6 @@ function removeChildren(node) {
 }
 
 function removeNode(node) {
-  if (!node._unmounting) {
-    const parent = node.parentNode
-    if (parent) {
-      if (node._mounting || document.contains(node)) {
-        node._unmounting = frame.once('render', () => {
-          parent.removeChild(node)
-          node._unmounting = null
-        })
-      } else {
-        parent.removeChild(node)
-      }
-    }
-  }
-}
-
-function unschedule(node) {
-  if (node._mounting) {
-    frame.off('render', node._mounting)
-    node._mounting = null
-  } else if (node._unmounting) {
-    frame.off('render', node._unmounting)
-    node._unmounting = null
-  }
+  const parent = node.parentNode
+  if (parent) parent.removeChild(node)
 }
