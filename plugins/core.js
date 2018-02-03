@@ -184,21 +184,24 @@ function validNode(val) {
 }
 
 function onlyNodes(vals) {
-  if (vals.length == 0) {
-    return vals
-  } else {
-    const res = []
-    for (let i = 0; i < vals.length; i++) {
-      const val = vals[i]
-      if (validNode(val)) {
-        res.push(val)
-      } else if (u.is(val)) {
-        for (let i = 0; i < val.nodes.length; i++) {
-          res.push(val.nodes[i])
-        }
-      }
+  if (vals.length) {
+    const nodes = []
+    eachNode(vals, (node) => nodes.push(node))
+    return nodes
+  }
+  return vals
+}
+
+function eachNode(vals, iterator) {
+  for (let i = 0, val; i < vals.length; i++) {
+    val = vals[i]
+    if (Array.isArray(val)) {
+      eachNode(val, iterator)
+    } else if (validNode(val)) {
+      iterator(val)
+    } else if (u.is(val)) {
+      val.each(iterator)
     }
-    return res
   }
 }
 
