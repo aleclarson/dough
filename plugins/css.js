@@ -49,14 +49,13 @@ const styleFns = {
           const anim = node._anims[prop]
           if (anim) anim.stop()
         }
-        if (!node._style) node._style = css(node)
-        if (document.contains(node)) {
-          node._style.set(prop, value)
-        } else {
-          // Skip framesync, but update the cache.
-          node._style.get()[prop] = value
-          node.style[prop] = value
-        }
+
+        let style = node._style
+        if (!style) node._style = style = css(node)
+        style.set(prop, value)
+
+        // Update immediately if not mounted.
+        document.contains(node) || style.render()
       }
     }
   }
