@@ -70,7 +70,8 @@ function removeListener(node, eventId, listener) {
 function createEvent(eventId, props) {
   const eventType = nativeEvents[eventId] || Event
   const bubbles = eventType == Event ?
-    props.bubbles !== false : nativeBubbles.indexOf(eventId) > -1
+    !props || props.bubbles !== false :
+    nativeBubbles.indexOf(eventId) > -1
 
   const event = new eventType(eventId, {bubbles, cancelable: true})
   if (props) addProps(event, props)
