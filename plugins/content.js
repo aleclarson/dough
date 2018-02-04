@@ -206,8 +206,11 @@ function AsyncRenderer() {
     }
     batch.length = 0
     frame.once('render', () => {
-      for (let i = 0; i < nodes.length; i++) {
-        asyncRule.peel(nodes[i])
+      const event = {bubbles: false}
+      for (let i = 0, node; i < nodes.length; i++) {
+        node = nodes[i]
+        asyncRule.peel(node)
+        $(node).trigger('render', event)
       }
     })
   }
