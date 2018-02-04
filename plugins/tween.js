@@ -98,9 +98,10 @@ function _animate(nodes, arg) {
       let anim = node._anims[prop]
       if (anim) anim.stop()
 
+      const style = node._style
       anim = tween({
         to: config.to[prop],
-        from: config.from[prop] || node._style.get(prop),
+        from: config.from[prop] || style.get(prop),
         ease: config.ease,
         duration: config.duration,
       })
@@ -109,7 +110,6 @@ function _animate(nodes, arg) {
         anim = chain(delay(config.delay), anim)
       }
 
-      const style = node._style
       node._anims[prop] = anim = anim.start({
         update: (val) => style.set(prop, val),
         complete() {
