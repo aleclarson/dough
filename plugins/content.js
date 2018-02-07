@@ -50,8 +50,10 @@ impl.html = function(text) {
     return this.each(node => {
       node.innerHTML = text
     })
+  } else {
+    const node = this.nodes[0]
+    return node ? node.innerHTML : ''
   }
-  return this.nodes[0].innerHTML
 };
 
 impl.prepend = function() {
@@ -84,8 +86,10 @@ impl.text = function(text) {
     return this.each(node => {
       node.textContent = text
     })
+  } else {
+    const node = this.nodes[0]
+    return node ? node.textContent : ''
   }
-  return this.nodes[0].textContent
 };
 
 impl.wrap = function(arg) {
