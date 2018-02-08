@@ -77,7 +77,7 @@ function _animate(nodes, arg) {
 
       // Create one tween for every property.
       for (let prop in config.to) {
-        anims.push(animate(node, u.kebab(prop)))
+        anims.push(animate(node, prop))
         count += 1
       }
       if (count == 0) {
@@ -94,14 +94,16 @@ function _animate(nodes, arg) {
         reject(err)
       }
     }
-    function animate(node, prop) {
+    function animate(node, key) {
+      const prop = u.kebab(key)
+
       let anim = node._anims[prop]
       if (anim) anim.stop()
 
       const style = node._style
       anim = tween({
-        to: config.to[prop],
-        from: config.from[prop] || style.get(prop),
+        to: config.to[key],
+        from: config.from[key] || style.get(prop),
         ease: config.ease,
         duration: config.duration,
       })
@@ -113,7 +115,7 @@ function _animate(nodes, arg) {
       node._anims[prop] = anim = anim.start({
         update: (val) => style.set(prop, val),
         complete() {
-          delete anims[prop]
+          delete node._anims[prop]
           if (--count == 0) resolve()
         }
       })
