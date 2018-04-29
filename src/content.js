@@ -200,6 +200,7 @@ function removeNode(node) {
 function AsyncRenderer() {
   const batch = []
   function flush() {
+    console.timeStamp('START asyncRender.flush()')
     const nodes = []
     for (let i = 0, next; i < batch.length; i++) {
       next = batch[i]
@@ -208,8 +209,11 @@ function AsyncRenderer() {
       next.render.call(next.parent, next.node)
       nodes.push(next.node)
     }
+    console.timeStamp('FINISH asyncRender.flush()')
     batch.length = 0
     frame.once('render', () => {
+      console.log('asyncRender: ', nodes)
+      console.timeStamp('asyncRender.reveal()')
       const event = {bubbles: false}
       for (let i = 0, node; i < nodes.length; i++) {
         node = nodes[i]

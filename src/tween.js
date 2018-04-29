@@ -96,14 +96,18 @@ function _animate(nodes, arg) {
     }
     function animate(node, key) {
       const prop = u.kebab(key)
+      const style = node._style
 
       let anim = node._anims[prop]
       if (anim) anim.stop()
 
-      const style = node._style
+      let fromValue = config.from[key]
+      if (fromValue == null)
+        fromValue = style.get(prop)
+
       anim = tween({
         to: config.to[key],
-        from: config.from[key] || style.get(prop),
+        from: fromValue,
         ease: config.ease,
         duration: config.duration,
       })

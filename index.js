@@ -1,14 +1,14 @@
 
-require('./plugins/access');
-require('./plugins/array');
-require('./plugins/classes');
-require('./plugins/clone');
-require('./plugins/content');
-require('./plugins/css');
-require('./plugins/events');
-require('./plugins/internal');
-require('./plugins/scroll');
-require('./plugins/traversal');
-require('./plugins/tween');
+require('./src/access')
+require('./src/array')
+require('./src/classes')
+require('./src/clone')
+require('./src/content')
+require('./src/css')
+require('./src/events')
+require('./src/internal')
+require('./src/scroll')
+require('./src/traversal')
+require('./src/tween')
 
-module.exports = require('./plugins/core');
+module.exports = require('./src/core')
