@@ -1,21 +1,21 @@
 
 const $ = require('./core');
-const impl = $.prototype;
+const proto = $.prototype;
 
-impl.attr = function() {
+proto.attr = function() {
   return this._pairs(arguments, attrFns)
 };
 
-Object.defineProperty(impl, 'bounds', {
+Object.defineProperty(proto, 'bounds', {
   get() { return this.nodes[0].getBoundingClientRect() }
 });
 
 // Handle data-* attributes for the matched elements
-impl.data = function() {
+proto.data = function() {
   return this._pairs(arguments, dataFns)
 };
 
-impl.prop = function(prop, value) {
+proto.prop = function(prop, value) {
   const {nodes} = this
   if (arguments.length == 2) {
     for (let i = 0; i < nodes.length; i++) {
@@ -28,7 +28,7 @@ impl.prop = function(prop, value) {
   }
 };
 
-impl.cache = function() {
+proto.cache = function() {
   if (arguments.length == 0) {
     return cacheFns.get(this.nodes[0])
   }

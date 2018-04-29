@@ -1,8 +1,8 @@
 
 const $ = require('./core')
-const impl = $.prototype
+const proto = $.prototype
 
-impl.addClass = function() {
+proto.addClass = function() {
   return this._apply($._splitReduce(arguments), addClass)
 }
 
@@ -11,7 +11,7 @@ function addClass(node, name) {
 }
 
 // Perf comparison: https://jsperf.com/does-class-exist
-impl.hasClass = function() {
+proto.hasClass = function() {
   const node = this.nodes[0]
   if (!node) return false
   const names = $._splitReduce(arguments)
@@ -21,7 +21,7 @@ impl.hasClass = function() {
   return true
 }
 
-impl.is = function(selector) {
+proto.is = function(selector) {
   const {length} = this
   if (length == 1) {
     return this._matches(selector, this.firstNode)
@@ -34,7 +34,7 @@ impl.is = function(selector) {
   return false
 }
 
-impl.not = function(selector) {
+proto.not = function(selector) {
   const {length} = this
   if (length == 1) {
     return this._matches(selector, this.firstNode)
@@ -45,7 +45,7 @@ impl.not = function(selector) {
   return this
 }
 
-impl.removeClass = function() {
+proto.removeClass = function() {
   return this._apply($._splitReduce(arguments), removeClass)
 }
 
@@ -53,7 +53,7 @@ function removeClass(node, name) {
   node.classList.remove(name)
 }
 
-impl.toggleClass = function(arg, flag) {
+proto.toggleClass = function(arg, flag) {
   if (flag === !!flag) {
     return this[flag ? 'addClass' : 'removeClass'](arg)
   }

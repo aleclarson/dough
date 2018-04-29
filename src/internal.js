@@ -3,7 +3,7 @@ const $ = require('./core');
 const noop = require('noop');
 const isObject = require('is-object');
 
-const impl = $.prototype;
+const proto = $.prototype;
 
 // Non-standard names are still required. 😳
 const nodeMatches = Function.call.bind(
@@ -14,7 +14,7 @@ const nodeMatches = Function.call.bind(
 
 // For every item in the given array, call the
 // iterator once per matched node.
-impl._apply = function(values, iterator) {
+proto._apply = function(values, iterator) {
   const {nodes} = this
   if (nodes.length) {
     for (let i = 0; i < values.length; i++) {
@@ -27,7 +27,7 @@ impl._apply = function(values, iterator) {
   return this
 }
 
-impl._matcher = function(selector) {
+proto._matcher = function(selector) {
   if (typeof selector == 'string') {
     return (node) => node.nodeType == 1 && nodeMatches(node, selector)
   }
@@ -41,7 +41,7 @@ impl._matcher = function(selector) {
   return noop.false
 }
 
-impl._matches = function(selector, node) {
+proto._matches = function(selector, node) {
   if (typeof selector == 'string') {
     return node.nodeType == 1 && nodeMatches(node, selector)
   }
@@ -54,22 +54,22 @@ impl._matches = function(selector, node) {
   return false
 }
 
-impl._pairs = function(args, impl) {
+proto._pairs = function(args, proto) {
   const {nodes} = this
   let prop = args[0]
   if (nodes.length) {
     let value = args[1]
     if (typeof prop == 'string') {
       if (args.length == 1) {
-        return impl.get(nodes[0], prop)
+        return proto.get(nodes[0], prop)
       }
-      impl.set(nodes, prop, value)
+      proto.set(nodes, prop, value)
     }
     else if (isObject(prop)) {
       const values = prop
       for (prop in values) {
         value = values[prop]
-        impl.set(nodes, prop, value)
+        proto.set(nodes, prop, value)
       }
     }
   }

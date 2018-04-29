@@ -1,9 +1,9 @@
 
 const $ = require('./core');
-const impl = $.prototype;
-const Umbrella = impl.constructor;
+const proto = $.prototype;
+const Dough = proto.constructor;
 
-impl.array = function(iterator) {
+proto.array = function(iterator) {
   const {nodes} = this
   let vals
   if (arguments.length == 0) {
@@ -25,23 +25,23 @@ impl.array = function(iterator) {
   return vals
 }
 
-impl.each = function(iterator) {
+proto.each = function(iterator) {
   this.nodes.forEach(iterator, this)
   return this
 }
 
-impl.filter = function(selector) {
+proto.filter = function(selector) {
   if (!selector) return this
   const matches = this._matcher(selector)
-  return new Umbrella(this.nodes.filter(matches))
+  return new Dough(this.nodes.filter(matches))
 }
 
-impl.map = function (iterator) {
+proto.map = function (iterator) {
   if (iterator) {
     const nodes = []
     this.array(iterator).forEach(node =>
       ~nodes.indexOf(node) || nodes.push(node))
-    return new Umbrella(nodes)
+    return new Dough(nodes)
   }
   return this
 }

@@ -1,14 +1,14 @@
 
 const $ = require('./core')
-const impl = $.prototype
+const proto = $.prototype
 
-impl.on = function(arg, listener, captures) {
+proto.on = function(arg, listener, captures) {
   return this._apply($._split(arg), (node, eventId) =>
     addListener(node, eventId, listener, captures))
 }
 
 // NOTE: This method breaks in strict mode.
-impl.once = function(arg, listener, captures) {
+proto.once = function(arg, listener, captures) {
   let once = listener._once
   if (!once) listener._once = once = function(event) {
     removeListener(this, event.type, once)
@@ -17,7 +17,7 @@ impl.once = function(arg, listener, captures) {
   return this.on(arg, once, captures)
 }
 
-impl.off = function(arg, listener) {
+proto.off = function(arg, listener) {
   // Check for one-time listeners.
   if (listener && listener._once) {
     listener = listener._once
@@ -26,7 +26,7 @@ impl.off = function(arg, listener) {
     removeListener(node, eventId, listener))
 }
 
-impl.trigger = function(arg, props) {
+proto.trigger = function(arg, props) {
   return this._apply($._split(arg), (node, eventId) =>
     node.dispatchEvent(createEvent(eventId, props)))
 }

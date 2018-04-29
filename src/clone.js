@@ -2,14 +2,14 @@
 const isObject = require('is-object');
 
 const $ = require('./core');
-const impl = $.prototype;
-const Umbrella = impl.constructor;
+const proto = $.prototype;
+const Dough = proto.constructor;
 
-impl.clone = function(attrs) {
+proto.clone = function(attrs) {
   if (attrs != null && !isObject(attrs)) {
     throw TypeError('Expected an object or undefined')
   }
-  return this.length == 1 ? new Umbrella([
+  return this.length == 1 ? new Dough([
     clone(this.firstNode, attrs)
   ]) : this.map(node => clone(node, attrs))
 }
@@ -25,7 +25,7 @@ function clone(node, attrs) {
   return clone
 }
 
-impl.mirror = mirror
+proto.mirror = mirror
 function mirror(src, dest) {
   for (let key in mirror) {
     mirror[key](src, dest)

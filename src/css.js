@@ -3,13 +3,13 @@ import css from 'stylefire/css'
 
 const $ = require('./core')
 
-const impl = $.prototype
+const proto = $.prototype
 
-impl.css = function() {
+proto.css = function() {
   return this._pairs(arguments, styleFns)
 }
 
-impl.render = function() {
+proto.render = function() {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
     const style = nodes[i]._style
@@ -18,7 +18,7 @@ impl.render = function() {
   return this
 }
 
-Object.defineProperty(impl, 'style', {
+Object.defineProperty(proto, 'style', {
   get() { return this.nodes[0].style }
 })
 

@@ -2,7 +2,7 @@
 const isObject = require('is-object')
 const noop = require('noop')
 
-const emptyInst = Object.create(Umbrella.prototype)
+const emptyInst = Object.create(Dough.prototype)
 const {reduce} = Array.prototype
 
 const htmlRE = /^\s*\</
@@ -11,7 +11,7 @@ const singleTagRE = /^\<[a-z][^\s\>]*\>$/
 // Reusable document range for complex HTML parsing
 const htmlRange = document.createRange()
 
-function Umbrella(nodes) {
+function Dough(nodes) {
   this.nodes = Object.freeze(nodes)
 }
 
@@ -62,13 +62,13 @@ function $(val, context) {
       document.createTextNode(val)
     ]
   }
-  return new Umbrella(nodes)
+  return new Dough(nodes)
 }
 
 module.exports = $
 
 $.is = function(val) {
-  return val && val.constructor == Umbrella
+  return val && val.constructor == Dough
 }
 
 $.isElem = function(val) {
@@ -105,7 +105,7 @@ $.addSelector = function(regex, select) {
 }
 
 // Expose the prototype and support `instanceof` checks.
-$.prototype = Umbrella.prototype
+$.prototype = Dough.prototype
 
 // This made the code faster, read "Initializing instance variables" in
 // https://developers.google.com/speed/articles/optimizing-javascript

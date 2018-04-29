@@ -4,7 +4,7 @@ const frame = require('framesync');
 const ruley = require('ruley');
 
 const $ = require('./core');
-const impl = $.prototype;
+const proto = $.prototype;
 
 // Asynchronous nodes are hidden until the next frame.
 const asyncRule = ruley('visibility: hidden !important;')
@@ -12,7 +12,7 @@ const asyncRule = ruley('visibility: hidden !important;')
 // Nodes are inserted asynchronously when their parent exists in the DOM.
 const asyncRender = AsyncRenderer()
 
-impl.after = function() {
+proto.after = function() {
   let above, below
   return this._mount(arguments, function(node) {
     const parent = this.parentNode
@@ -27,25 +27,25 @@ impl.after = function() {
   })
 };
 
-impl.append = function() {
+proto.append = function() {
   return this._mount(arguments, appendChild)
 };
 
-impl.appendTo = function(parent, context) {
+proto.appendTo = function(parent, context) {
   if (parent) $(parent, context).append(this)
   return this
 };
 
-impl.before = function() {
+proto.before = function() {
   return this._mount(arguments, insertBefore)
 };
 
-impl.empty = function() {
+proto.empty = function() {
   return this.each(removeChildren)
 };
 
 // TODO: Mutations should be async.
-impl.html = function(text) {
+proto.html = function(text) {
   if (arguments.length) {
     return this.each(node => {
       node.innerHTML = text
@@ -56,7 +56,7 @@ impl.html = function(text) {
   }
 };
 
-impl.prepend = function() {
+proto.prepend = function() {
   let parent, below
   return this._mount(arguments, function(node) {
     if (parent != this) {
@@ -67,21 +67,21 @@ impl.prepend = function() {
   })
 };
 
-impl.prependTo = function(parent, context) {
+proto.prependTo = function(parent, context) {
   if (parent) $(parent, context).prepend(this)
   return this
 };
 
-impl.remove = function() {
+proto.remove = function() {
   return this.each(removeNode)
 };
 
-impl.replace = function() {
+proto.replace = function() {
   return this._mount(arguments, replaceNode)
 };
 
 // TODO: Mutations should be async.
-impl.text = function(text) {
+proto.text = function(text) {
   if (arguments.length) {
     return this.each(node => {
       node.textContent = text
@@ -92,7 +92,7 @@ impl.text = function(text) {
   }
 };
 
-impl.wrap = function(arg) {
+proto.wrap = function(arg) {
   if (typeof arg != 'function') {
     return this._mount(arguments, wrapNode)
   }
@@ -113,7 +113,7 @@ impl.wrap = function(arg) {
 // Helpers
 //
 
-impl._mount = function(vals, render) {
+proto._mount = function(vals, render) {
   const parents = this.nodes
   if (parents.length) {
     const parent = parents.length > 1 ? null : parents[0]
