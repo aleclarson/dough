@@ -1,9 +1,9 @@
 
-const isObject = require('is-object');
+const isObject = require('is-object')
 
-const $ = require('./core');
-const proto = $.prototype;
-const Dough = proto.constructor;
+const $ = require('./core')
+const proto = $.prototype
+const Dough = proto.constructor
 
 proto.clone = function(attrs) {
   if (attrs != null && !isObject(attrs)) {

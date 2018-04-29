@@ -1,10 +1,10 @@
 // TODO: Postpone mounting if `frame.elapsed` is too long.
 
-const frame = require('framesync');
-const ruley = require('ruley');
+const frame = require('framesync')
+const ruley = require('ruley')
 
-const $ = require('./core');
-const proto = $.prototype;
+const $ = require('./core')
+const proto = $.prototype
 
 // Asynchronous nodes are hidden until the next frame.
 const asyncRule = ruley('visibility: hidden !important;')
@@ -25,24 +25,24 @@ proto.after = function() {
     }
     parent.insertBefore(node, below)
   })
-};
+}
 
 proto.append = function() {
   return this._mount(arguments, appendChild)
-};
+}
 
 proto.appendTo = function(parent, context) {
   if (parent) $(parent, context).append(this)
   return this
-};
+}
 
 proto.before = function() {
   return this._mount(arguments, insertBefore)
-};
+}
 
 proto.empty = function() {
   return this.each(removeChildren)
-};
+}
 
 // TODO: Mutations should be async.
 proto.html = function(text) {
@@ -54,7 +54,7 @@ proto.html = function(text) {
     const node = this.nodes[0]
     return node ? node.innerHTML : ''
   }
-};
+}
 
 proto.prepend = function() {
   let parent, below
@@ -65,20 +65,20 @@ proto.prepend = function() {
     }
     this.insertBefore(node, below)
   })
-};
+}
 
 proto.prependTo = function(parent, context) {
   if (parent) $(parent, context).prepend(this)
   return this
-};
+}
 
 proto.remove = function() {
   return this.each(removeNode)
-};
+}
 
 proto.replace = function() {
   return this._mount(arguments, replaceNode)
-};
+}
 
 // TODO: Mutations should be async.
 proto.text = function(text) {
@@ -90,7 +90,7 @@ proto.text = function(text) {
     const node = this.nodes[0]
     return node ? node.textContent : ''
   }
-};
+}
 
 proto.wrap = function(arg) {
   if (typeof arg != 'function') {
@@ -107,7 +107,7 @@ proto.wrap = function(arg) {
       }
     }
   })
-};
+}
 
 //
 // Helpers

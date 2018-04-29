@@ -1,7 +1,7 @@
 
-const $ = require('./core');
-const proto = $.prototype;
-const Dough = proto.constructor;
+const $ = require('./core')
+const proto = $.prototype
+const Dough = proto.constructor
 
 proto.array = function(iterator) {
   const {nodes} = this

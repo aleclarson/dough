@@ -1,16 +1,16 @@
 
-const $ = require('./core');
-const noop = require('noop');
-const isObject = require('is-object');
+const $ = require('./core')
+const noop = require('noop')
+const isObject = require('is-object')
 
-const proto = $.prototype;
+const proto = $.prototype
 
 // Non-standard names are still required. 😳
 const nodeMatches = Function.call.bind(
   Element.prototype.matches ||
   Element.prototype.msMatchesSelector ||
   Element.prototype.webkitMatchesSelector
-);
+)
 
 // For every item in the given array, call the
 // iterator once per matched node.

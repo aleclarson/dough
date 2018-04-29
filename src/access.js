@@ -1,19 +1,19 @@
 
-const $ = require('./core');
-const proto = $.prototype;
+const $ = require('./core')
+const proto = $.prototype
 
 proto.attr = function() {
   return this._pairs(arguments, attrFns)
-};
+}
 
 Object.defineProperty(proto, 'bounds', {
   get() { return this.nodes[0].getBoundingClientRect() }
-});
+})
 
 // Handle data-* attributes for the matched elements
 proto.data = function() {
   return this._pairs(arguments, dataFns)
-};
+}
 
 proto.prop = function(prop, value) {
   const {nodes} = this
@@ -26,14 +26,14 @@ proto.prop = function(prop, value) {
   if (nodes.length) {
     return nodes[0][prop]
   }
-};
+}
 
 proto.cache = function() {
   if (arguments.length == 0) {
     return cacheFns.get(this.nodes[0])
   }
   return this._pairs(arguments, cacheFns)
-};
+}
 
 //
 // Helpers

@@ -1,7 +1,7 @@
 
-const $ = require('./core');
-const proto = $.prototype;
-const Dough = proto.constructor;
+const $ = require('./core')
+const proto = $.prototype
+const Dough = proto.constructor
 
 proto.children = function(selector) {
   const children = this.length == 1 ?
@@ -15,7 +15,7 @@ function getChildren(node) {
 
 Object.defineProperty(proto, 'childNodes', {
   get() { return this.nodes[0].childNodes }
-});
+})
 
 proto.closest = function(selector, context) {
   const matches = this._matcher(selector)
@@ -46,7 +46,7 @@ proto.contains = function(arg) {
 proto.eq = function(index) {
   const node = this.nodes[index < 0 ? this.length + index : index]
   return node ? new Dough([node]) : $()
-};
+}
 
 proto.find = function(selector) {
   const {nodes} = this
@@ -58,7 +58,7 @@ proto.find = function(selector) {
     }
   }
   return $()
-};
+}
 
 proto.findAll = function(selector) {
   if (typeof selector != 'string') {
@@ -68,7 +68,7 @@ proto.findAll = function(selector) {
   }
   return this.map(node =>
     $.isElem(node) && node.querySelectorAll(selector))
-};
+}
 
 proto.findLast = function(selector) {
   const {nodes} = this
@@ -80,7 +80,7 @@ proto.findLast = function(selector) {
     }
   }
   return $()
-};
+}
 
 proto.first = function(selector) {
   const {nodes} = this
@@ -97,15 +97,15 @@ proto.first = function(selector) {
   return nodes.length > 1
     ? new Dough([nodes[0]])
     : this
-};
+}
 
 Object.defineProperty(proto, 'firstChild', {
   get() { return this.nodes[0].firstChild }
-});
+})
 
 Object.defineProperty(proto, 'firstNode', {
   get() { return this.nodes[0] }
-});
+})
 
 proto.indexOf = function(arg) {
   return this.nodes.indexOf($(arg).firstNode)
@@ -134,15 +134,15 @@ proto.last = function(selector) {
   return nodes.length > 1
     ? new Dough([nodes[nodes.length - 1]])
     : this
-};
+}
 
 Object.defineProperty(proto, 'lastChild', {
   get() { return last(this.nodes).lastChild }
-});
+})
 
 Object.defineProperty(proto, 'lastNode', {
   get() { return last(this.nodes) }
-});
+})
 
 function last(arr) {
   return arr[arr.length - 1]
@@ -157,7 +157,7 @@ proto.parent = function(selector) {
     const parents = this.map(getParent)
     return selector ? parents.filter(selector) : parents
   }
-};
+}
 
 function getParent(node) {
   // Avoid document fragments.
@@ -171,7 +171,7 @@ Object.defineProperty(proto, 'parentNode', {
     const node = this.nodes[0].parentNode
     return $.isElem(node) ? node : null
   }
-});
+})
 
 proto.siblings = function(selector) {
   return this.parent().children(selector).not(this)
