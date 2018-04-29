@@ -4,13 +4,13 @@ The jQuery mindset re-imagined for 2018. 💸
 
 ## Features
 
-- Fast: maybe (not yet benchmarked)
-- Effective: powerful features, no bloat
-- Intuitive: read less, write more
-- Animatable: integrated with [Popmotion](https://github.com/popmotion/popmotion)
-- Modern: written in ES6
+- **Fast:** maybe (not yet benchmarked)
+- **Effective:** powerful features, no bloat
+- **Intuitive:** read less, write more
+- **Animatable:** integrated with [Popmotion](https://github.com/popmotion/popmotion)
+- **Modern:** written in ES6
 
-**NOTE:** IE 10 and under are not supported (yet?)
+&nbsp;
 
 ## $
 
@@ -40,82 +40,85 @@ $(null) == $(undefined)
 body == $(body)
 ```
 
+&nbsp;
+
 ## $.prototype
 
-**Access:**
-- attr()
-- bounds
-- cache()
-- children()
-- childNodes
-- closest()
-- contains()
-- css()
-- data()
-- eq()
-- find()
-- findAll()
-- findLast()
-- first()
-- firstChild
-- firstNode
-- hasClass()
-- html()
-- index
-- indexOf()
-- is()
-- last()
-- lastChild
-- lastNode
-- not()
-- parent()
-- parentNode
-- prop()
-- siblings()
-- style
-- text()
+### Access
+- `attr()`
+- `bounds`
+- `cache()`
+- `css()`
+- `data()`
+- `hasClass()`
+- `html()`
+- `index`
+- `is()`
+- `not()`
+- `prop()`
+- `style`
+- `text()`
 
-**Events:**
-- off()
-- on()
-- once()
-- trigger()
+### Events
+- `off()`
+- `on()`
+- `once()`
+- `trigger()`
 
-**Mutation:**
-- addClass()
-- after()
-- append()
-- appendTo()
-- attr()
-- before()
-- css()
-- data()
-- empty()
-- html()
-- prepend()
-- prependTo()
-- prop()
-- remove()
-- removeClass()
-- render()
-- replace()
-- scroll()
-- stop()
-- text()
-- toggleClass()
-- tween()
-- wrap()
+### Mutation
+- `addClass()`
+- `after()`
+- `append()`
+- `appendTo()`
+- `attr()`
+- `before()`
+- `css()`
+- `data()`
+- `empty()`
+- `html()`
+- `prepend()`
+- `prependTo()`
+- `prop()`
+- `remove()`
+- `removeClass()`
+- `render()`
+- `replace()`
+- `scroll()`
+- `stop()`
+- `text()`
+- `toggleClass()`
+- `tween()`
+- `wrap()`
 
-**Traversal:**
-- each()
-- filter()
-- map()
+### Traversal
+- `children()`
+- `childNodes`
+- `closest()`
+- `contains()`
+- `each()`
+- `eq()`
+- `filter()`
+- `find()`
+- `findAll()`
+- `findLast()`
+- `first()`
+- `firstChild`
+- `firstNode`
+- `indexOf()`
+- `last()`
+- `lastChild`
+- `lastNode`
+- `map()`
+- `parent()`
+- `parentNode`
+- `siblings()`
 
-**Other:**
-- array()
-- clone()
+### Other
+- `array()`
+- `clone()`
+
+&nbsp;
 
 ## Reference
 
-*Documentation is forthcoming.**
-
+*Documentation is forthcoming.*
