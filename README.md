@@ -2,8 +2,6 @@
 
 The jQuery mindset re-imagined for 2018. 💸
 
-## Features
-
 - **Fast:** maybe (not yet benchmarked)
 - **Effective:** powerful features, no bloat
 - **Intuitive:** read less, write more
@@ -12,7 +10,7 @@ The jQuery mindset re-imagined for 2018. 💸
 
 &nbsp;
 
-## $
+## `$` makes sense
 
 ```js
 // Get that money
@@ -42,7 +40,7 @@ body == $(body)
 
 &nbsp;
 
-## $.prototype
+## `$.prototype` is here to help
 
 ### Access
 - `attr()`
