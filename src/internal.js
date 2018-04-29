@@ -1,9 +1,9 @@
 
-const u = require('./core');
+const $ = require('./core');
 const noop = require('noop');
 const isObject = require('is-object');
 
-const impl = u.prototype;
+const impl = $.prototype;
 
 // Non-standard names are still required. 😳
 const nodeMatches = Function.call.bind(
@@ -34,7 +34,7 @@ impl._matcher = function(selector) {
   if (typeof selector == 'function') {
     return selector
   }
-  if (u.is(selector)) {
+  if ($.is(selector)) {
     const {nodes} = selector
     return (node) => nodes.indexOf(node) != -1
   }
@@ -48,7 +48,7 @@ impl._matches = function(selector, node) {
   if (typeof selector == 'function') {
     return selector(node, 0)
   }
-  if (u.is(selector)) {
+  if ($.is(selector)) {
     return selector.nodes.indexOf(node) > -1
   }
   return false

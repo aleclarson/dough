@@ -1,11 +1,11 @@
 
-const u = require('./core');
-const impl = u.prototype;
+const $ = require('./core');
+const impl = $.prototype;
 const Umbrella = impl.constructor;
 
 impl.children = function(selector) {
   const children = this.length == 1 ?
-    u(this.nodes[0].childNodes) : this.array(getChildren)
+    $(this.nodes[0].childNodes) : this.array(getChildren)
   return selector ? children.filter(selector) : children
 }
 
@@ -37,7 +37,7 @@ impl.contains = function(arg) {
     const {nodes} = this
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i]
-      if (u.isElem(node) && matches(node)) return true
+      if ($.isElem(node) && matches(node)) return true
     }
   }
   return false
@@ -45,41 +45,41 @@ impl.contains = function(arg) {
 
 impl.eq = function(index) {
   const node = this.nodes[index < 0 ? this.length + index : index]
-  return node ? new Umbrella([node]) : u()
+  return node ? new Umbrella([node]) : $()
 };
 
 impl.find = function(selector) {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
     let node = nodes[i]
-    if (u.isElem(node)) {
+    if ($.isElem(node)) {
       node = node.querySelector(selector)
       if (node) return new Umbrella([node])
     }
   }
-  return u()
+  return $()
 };
 
 impl.findAll = function(selector) {
   if (typeof selector != 'string') {
     const matches = this._matcher(selector)
     return this.map(node =>
-      u.isElem(node) && node.querySelectorAll('*').filter(matches))
+      $.isElem(node) && node.querySelectorAll('*').filter(matches))
   }
   return this.map(node =>
-    u.isElem(node) && node.querySelectorAll(selector))
+    $.isElem(node) && node.querySelectorAll(selector))
 };
 
 impl.findLast = function(selector) {
   const {nodes} = this
   for (let i = nodes.length; i > 0; i) {
     let node = nodes[--i]
-    if (u.isElem(node)) {
+    if ($.isElem(node)) {
       node = last(node.querySelectorAll(selector))
       if (node) return new Umbrella([node])
     }
   }
-  return u()
+  return $()
 };
 
 impl.first = function(selector) {
@@ -92,7 +92,7 @@ impl.first = function(selector) {
         return new Umbrella([node])
       }
     }
-    return u()
+    return $()
   }
   return nodes.length > 1
     ? new Umbrella([nodes[0]])
@@ -108,7 +108,7 @@ Object.defineProperty(impl, 'firstNode', {
 });
 
 impl.indexOf = function(arg) {
-  return this.nodes.indexOf(u(arg).firstNode)
+  return this.nodes.indexOf($(arg).firstNode)
 }
 
 const indexOf = Function.call.bind(Array.prototype.indexOf)
@@ -129,7 +129,7 @@ impl.last = function(selector) {
         return new Umbrella([node])
       }
     }
-    return u()
+    return $()
   }
   return nodes.length > 1
     ? new Umbrella([nodes[nodes.length - 1]])
@@ -151,8 +151,8 @@ function last(arr) {
 impl.parent = function(selector) {
   if (this.length == 1) {
     const parent = this.parentNode
-    if (!u.isElem(parent)) return u()
-    return u(selector && !this._matches(selector, parent) ? null : parent)
+    if (!$.isElem(parent)) return $()
+    return $(selector && !this._matches(selector, parent) ? null : parent)
   } else {
     const parents = this.map(getParent)
     return selector ? parents.filter(selector) : parents
@@ -161,7 +161,7 @@ impl.parent = function(selector) {
 
 function getParent(node) {
   // Avoid document fragments.
-  if (u.isElem(node.parentNode)) {
+  if ($.isElem(node.parentNode)) {
     return node.parentNode
   }
 }
@@ -169,7 +169,7 @@ function getParent(node) {
 Object.defineProperty(impl, 'parentNode', {
   get() {
     const node = this.nodes[0].parentNode
-    return u.isElem(node) ? node : null
+    return $.isElem(node) ? node : null
   }
 });
 

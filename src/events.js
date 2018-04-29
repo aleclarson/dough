@@ -1,9 +1,9 @@
 
-const u = require('./core')
-const impl = u.prototype
+const $ = require('./core')
+const impl = $.prototype
 
 impl.on = function(arg, listener, captures) {
-  return this._apply(u._split(arg), (node, eventId) =>
+  return this._apply($._split(arg), (node, eventId) =>
     addListener(node, eventId, listener, captures))
 }
 
@@ -22,12 +22,12 @@ impl.off = function(arg, listener) {
   if (listener && listener._once) {
     listener = listener._once
   }
-  return this._apply(u._split(arg), (node, eventId) =>
+  return this._apply($._split(arg), (node, eventId) =>
     removeListener(node, eventId, listener))
 }
 
 impl.trigger = function(arg, props) {
-  return this._apply(u._split(arg), (node, eventId) =>
+  return this._apply($._split(arg), (node, eventId) =>
     node.dispatchEvent(createEvent(eventId, props)))
 }
 

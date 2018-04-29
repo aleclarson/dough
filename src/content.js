@@ -3,8 +3,8 @@
 const frame = require('framesync');
 const ruley = require('ruley');
 
-const u = require('./core');
-const impl = u.prototype;
+const $ = require('./core');
+const impl = $.prototype;
 
 // Asynchronous nodes are hidden until the next frame.
 const asyncRule = ruley('visibility: hidden !important;')
@@ -32,7 +32,7 @@ impl.append = function() {
 };
 
 impl.appendTo = function(parent, context) {
-  if (parent) u(parent, context).append(this)
+  if (parent) $(parent, context).append(this)
   return this
 };
 
@@ -68,7 +68,7 @@ impl.prepend = function() {
 };
 
 impl.prependTo = function(parent, context) {
-  if (parent) u(parent, context).prepend(this)
+  if (parent) $(parent, context).prepend(this)
   return this
 };
 
@@ -97,7 +97,7 @@ impl.wrap = function(arg) {
     return this._mount(arguments, wrapNode)
   }
   return this.each((node, i) => {
-    const wrapper = u(arg(node, i))
+    const wrapper = $(arg(node, i))
     if (wrapper.length) {
       unschedule(node)
       if (document.contains(node)) {
@@ -131,19 +131,19 @@ impl._mount = function(vals, render) {
           mount.call(parent, val)
         }
         else if (typeof val == 'object') {
-          u(val).nodes.forEach(mount, parent)
+          $(val).nodes.forEach(mount, parent)
         }
         else {
-          u._parseHTML(val).forEach(mount, parent)
+          $._parseHTML(val).forEach(mount, parent)
         }
       }
       else if (typeof val == 'object') {
-        val = u(val)
+        val = $(val)
         parents.forEach(parent =>
           val.clone().nodes.forEach(mount, parent))
       }
       else {
-        val = u._parseHTML(val)
+        val = $._parseHTML(val)
         parents.forEach((parent, i) =>
           (i ? val.map(cloneNode) : val).forEach(mount, parent))
       }

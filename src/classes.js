@@ -1,9 +1,9 @@
 
-const u = require('./core')
-const impl = u.prototype
+const $ = require('./core')
+const impl = $.prototype
 
 impl.addClass = function() {
-  return this._apply(u._splitReduce(arguments), addClass)
+  return this._apply($._splitReduce(arguments), addClass)
 }
 
 function addClass(node, name) {
@@ -14,7 +14,7 @@ function addClass(node, name) {
 impl.hasClass = function() {
   const node = this.nodes[0]
   if (!node) return false
-  const names = u._splitReduce(arguments)
+  const names = $._splitReduce(arguments)
   for (let i = 0; i < names.length; i++) {
     if (!node.classList.contains(names[i])) return false
   }
@@ -46,7 +46,7 @@ impl.not = function(selector) {
 }
 
 impl.removeClass = function() {
-  return this._apply(u._splitReduce(arguments), removeClass)
+  return this._apply($._splitReduce(arguments), removeClass)
 }
 
 function removeClass(node, name) {
@@ -57,7 +57,7 @@ impl.toggleClass = function(arg, flag) {
   if (flag === !!flag) {
     return this[flag ? 'addClass' : 'removeClass'](arg)
   }
-  return this._apply(u._splitReduce(arg), toggleClass)
+  return this._apply($._splitReduce(arg), toggleClass)
 }
 
 function toggleClass(node, name) {

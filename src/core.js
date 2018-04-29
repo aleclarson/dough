@@ -15,13 +15,13 @@ function Umbrella(nodes) {
   this.nodes = Object.freeze(nodes)
 }
 
-function u(val, context) {
+function $(val, context) {
   // Null/undefined always returns the same instance.
   if (val == null) {
     return emptyInst
   }
   // Return instances immediately.
-  if (u.is(val)) {
+  if ($.is(val)) {
     return val
   }
   let nodes
@@ -65,25 +65,25 @@ function u(val, context) {
   return new Umbrella(nodes)
 }
 
-module.exports = u
+module.exports = $
 
-u.is = function(val) {
+$.is = function(val) {
   return val && val.constructor == Umbrella
 }
 
-u.isElem = function(val) {
+$.isElem = function(val) {
   return val && val.nodeType == 1
 }
 
-u.isText = function(val) {
+$.isText = function(val) {
   return val && val.nodeType == 3
 }
 
-u.elem = function(tag) {
+$.elem = function(tag) {
   return document.createElement(tag)
 }
 
-u.text = function(text) {
+$.text = function(text) {
   return document.createTextNode(text)
 }
 
@@ -93,11 +93,11 @@ const noKebab = {
   viewBox: 1,
 }
 
-u.kebab = function(str) {
+$.kebab = function(str) {
   return noKebab[str] ? str : str.replace(capsRE, kebabify)
 }
 
-u.addSelector = function(regex, select) {
+$.addSelector = function(regex, select) {
   selectors.push({
     test: regex.test.bind(regex),
     select,
@@ -105,25 +105,25 @@ u.addSelector = function(regex, select) {
 }
 
 // Expose the prototype and support `instanceof` checks.
-u.prototype = Umbrella.prototype
+$.prototype = Umbrella.prototype
 
 // This made the code faster, read "Initializing instance variables" in
 // https://developers.google.com/speed/articles/optimizing-javascript
 // Also, freeze the array to prevent mutations.
-u.prototype.nodes = Object.freeze([])
+$.prototype.nodes = Object.freeze([])
 
-Object.defineProperty(u.prototype, 'length', {
+Object.defineProperty($.prototype, 'length', {
   get() { return this.nodes.length }
 })
 
 // [INTERNAL USE ONLY]
-u._initAttributes = initAttributes
-u._parseHTML = parseHTML
-u._select = select
-u._slice = (vals, filter) =>
+$._initAttributes = initAttributes
+$._parseHTML = parseHTML
+$._select = select
+$._slice = (vals, filter) =>
   vals && isArrayish(vals) ? slice(vals, filter) : []
-u._split = (str) => str.trim().split(' ')
-u._splitReduce = (arr) => reduce.call(arr, splitReducer, [])
+$._split = (str) => str.trim().split(' ')
+$._splitReduce = (arr) => reduce.call(arr, splitReducer, [])
 
 //
 // Helpers
@@ -160,7 +160,7 @@ function initAttributes(node, attrs) {
         if (typeof val == 'function') {
           val = val.call(node, attrs)
         }
-        u(val).appendTo(node)
+        $(val).appendTo(node)
         break
 
       case 'text':
@@ -199,7 +199,7 @@ function eachNode(vals, iterator) {
       eachNode(val, iterator)
     } else if (validNode(val)) {
       iterator(val)
-    } else if (u.is(val)) {
+    } else if ($.is(val)) {
       val.each(iterator)
     }
   }
@@ -223,7 +223,7 @@ function slice(vals, filter = noop.true) {
 }
 
 function splitReducer(res, arg) {
-  return res.concat(u._split(arg))
+  return res.concat($._split(arg))
 }
 
 function select(selector, context) {
@@ -244,16 +244,16 @@ function select(selector, context) {
 const selectors = []
 
 // Find nodes with the given class name.
-u.addSelector(/^\.[\w\-]+$/, function(val) {
+$.addSelector(/^\.[\w\-]+$/, function(val) {
   return document.getElementsByClassName(val.slice(1))
 })
 
 // Find nodes with the given HTML tag.
-u.addSelector(/^\w+$/, function(val) {
+$.addSelector(/^\w+$/, function(val) {
   return document.getElementsByTagName(val)
 })
 
 // Find the first node with the given `id` attribute.
-u.addSelector(/^\#[\w\-]+$/, function(val) {
+$.addSelector(/^\#[\w\-]+$/, function(val) {
   return document.getElementById(val.slice(1))
 })

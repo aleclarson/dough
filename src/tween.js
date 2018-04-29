@@ -1,6 +1,6 @@
 // TODO: add `pause` and `resume` methods
 
-const u = require('./core')
+const $ = require('./core')
 
 import chain from 'popmotion/compositors/chain'
 import delay from 'popmotion/compositors/delay'
@@ -13,7 +13,7 @@ const noop = require('noop')
 
 const emptyObject = {}
 
-u.prototype.tween = function(arg) {
+$.prototype.tween = function(arg) {
   const {nodes} = this
   if (typeof arg == 'string') {
     if (nodes.length == 0) {
@@ -28,7 +28,7 @@ u.prototype.tween = function(arg) {
   return _animate(nodes, arg)
 }
 
-u.prototype.stop = function(prop) {
+$.prototype.stop = function(prop) {
   const {nodes} = this
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i]
@@ -95,7 +95,7 @@ function _animate(nodes, arg) {
       }
     }
     function animate(node, key) {
-      const prop = u.kebab(key)
+      const prop = $.kebab(key)
       const style = node._style
 
       let anim = node._anims[prop]

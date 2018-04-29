@@ -1,6 +1,6 @@
 
-const u = require('./core');
-const impl = u.prototype;
+const $ = require('./core');
+const impl = $.prototype;
 const Umbrella = impl.constructor;
 
 impl.array = function(iterator) {
@@ -14,7 +14,7 @@ impl.array = function(iterator) {
   } else {
     vals = []
     for (let i = 0; i < nodes.length; i++) {
-      const val = u(iterator.call(this, nodes[i], i))
+      const val = $(iterator.call(this, nodes[i], i))
       if (val.length) {
         for (let i = 0; i < val.nodes.length; i++) {
           vals.push(val.nodes[i])

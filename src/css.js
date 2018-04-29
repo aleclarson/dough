@@ -1,9 +1,9 @@
 
 import css from 'stylefire/css'
 
-const u = require('./core')
+const $ = require('./core')
 
-const impl = u.prototype
+const impl = $.prototype
 
 impl.css = function() {
   return this._pairs(arguments, styleFns)
@@ -29,8 +29,8 @@ Object.defineProperty(impl, 'style', {
 const styleFns = {
   get(node, prop) {
     // Avoid text nodes.
-    if (u.isElem(node)) {
-      prop = u.kebab(prop)
+    if ($.isElem(node)) {
+      prop = $.kebab(prop)
       if (document.contains(node)) {
         if (!node._style) node._style = css(node)
         return node._style.get(prop)
@@ -40,11 +40,11 @@ const styleFns = {
   },
   set(nodes, prop, value) {
     if (typeof value == 'undefined') return
-    prop = u.kebab(prop)
+    prop = $.kebab(prop)
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i]
       // Avoid text nodes.
-      if (u.isElem(node)) {
+      if ($.isElem(node)) {
         if (node._anims) {
           const anim = node._anims[prop]
           if (anim) anim.stop()

@@ -1,8 +1,8 @@
 
 const isObject = require('is-object');
 
-const u = require('./core');
-const impl = u.prototype;
+const $ = require('./core');
+const impl = $.prototype;
 const Umbrella = impl.constructor;
 
 impl.clone = function(attrs) {
@@ -16,12 +16,12 @@ impl.clone = function(attrs) {
 
 function clone(node, attrs) {
   const clone = node.cloneNode(true)
-  if (attrs) u._initAttributes(clone, attrs)
+  if (attrs) $._initAttributes(clone, attrs)
   mirror(node, clone)
 
   // Mirror every descendant node.
-  const nodes = u._select('*', nodes)
-  u._select('*', clone).forEach((dest, i) => mirror(nodes[i], dest))
+  const nodes = $._select('*', nodes)
+  $._select('*', clone).forEach((dest, i) => mirror(nodes[i], dest))
   return clone
 }
 

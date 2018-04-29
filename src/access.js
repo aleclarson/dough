@@ -1,6 +1,6 @@
 
-const u = require('./core');
-const impl = u.prototype;
+const $ = require('./core');
+const impl = $.prototype;
 
 impl.attr = function() {
   return this._pairs(arguments, attrFns)
@@ -41,11 +41,11 @@ impl.cache = function() {
 
 const attrFns = {
   get(node, attr) {
-    return node.getAttribute(u.kebab(attr))
+    return node.getAttribute($.kebab(attr))
   },
   set(nodes, attr, value) {
     if (value !== undefined) {
-      attr = u.kebab(attr)
+      attr = $.kebab(attr)
       const removed = value === null
       for (let i = 0; i < nodes.length; i++) {
         if (removed) {
